@@ -21,6 +21,10 @@ app.loader
     {name:'p3_02',url:'../images/p3_02.png'},
     {name:'p3_03',url:'../images/p3_03.png'},
     {name:'p3_04',url:'../images/p3_04.png'},
+    {name:'p3_black_car',url:'../images/p3_black_car.png'},
+    {name:'p3_red_car',url:'../images/p3_red_car.png'},
+    {name:'p3_white_car',url:'../images/p3_white_car.png'},
+    {name:'p3_yellow_car',url:'../images/p3_yellow_car.png'},
 ])
 .load(setup)
 .on('progress',(loader, res)=>{
@@ -35,9 +39,12 @@ app.loader
     }
 });
 
-//屏幕宽高
-var winWidth = $(window).width(),
-    winHeight = $(window).height();
+
+var global={
+    winWidth: $(window).width(), //屏幕宽
+    winHeight: $(window).height(), //屏幕高
+    activeCar:0, //0：黄色汽车, 1：白色汽车, 2：红色汽车, 3：黑色汽车
+}
 
 /**** p1页 start ****/
 var p1 = new PIXI.Container();
@@ -127,24 +134,72 @@ function setup(loader, res){
     p3_car_group.width=p3_car_group.height=750;
     p3_car_group.position.set(0,(p3._height-p3_car_group._height)/2);
 
+    //选择汽车标志
+    var p3_02 = new PIXI.Sprite.from(res.p3_02.texture);
+    var p302PositionArr=[
+        {x:210,y:20},
+        {x:495,y:20},
+        {x:210,y:380},
+        {x:495,y:380},
+    ];
+    p3_02.position.set(p302PositionArr[0].x, p302PositionArr[0].y);
+
+    var p3CarPositionArr=[
+        {x:155,y:82},
+        {x:440,y:82},
+        {x:155,y:440},
+        {x:440,y:440},
+    ];
     //黄色汽车
-    var p3_yct = res.p3_03.texture;
-    var p3_yc_rectangle = new PIXI.Rectangle(0, 0, 155, 269);
-    p3_yct.frame = p3_yc_rectangle;
-    var p3_yc = new PIXI.Sprite(p3_yct);
-    p3_yc.position.set(0,0);
+    var p3_yellow_car = new PIXI.Sprite.from(res.p3_yellow_car.texture);
+    p3_yellow_car.position.set(p3CarPositionArr[0].x, p3CarPositionArr[0].y);
+    p3_yellow_car.interactive = true;
+    p3_yellow_car.on('tap', function(){
+        console.log('yc');
+        p3_02.position.set(p302PositionArr[0].x, p302PositionArr[0].y);
+        global.activeCar = 0;
+    }); 
     //白色汽车
-    var p3_wct = res.p3_03.texture;
-    var p3_wc_rectangle = new PIXI.Rectangle(169, 0, 155, 269);
-    p3_wct.frame = p3_wc_rectangle;
-    var p3_wc = new PIXI.Sprite(p3_wct);
-    p3_wc.position.set(169,0);
+    var p3_white_car = new PIXI.Sprite.from(res.p3_white_car.texture);
+    p3_white_car.position.set(p3CarPositionArr[1].x, p3CarPositionArr[1].y);
+    p3_white_car.interactive = true;
+    p3_white_car.on('tap', function(){
+        console.log('wc');
+        p3_02.position.set(p302PositionArr[1].x, p302PositionArr[1].y);
+        global.activeCar = 1;
+    }); 
+    //红色汽车
+    var p3_red_car = new PIXI.Sprite.from(res.p3_red_car.texture);
+    p3_red_car.position.set(p3CarPositionArr[2].x, p3CarPositionArr[2].y);
+    p3_red_car.interactive = true;
+    p3_red_car.on('tap', function(){
+        console.log('rc');
+        p3_02.position.set(p302PositionArr[2].x, p302PositionArr[2].y);
+        global.activeCar = 2;
+    }); 
+    //黑色汽车
+    var p3_black_car = new PIXI.Sprite.from(res.p3_black_car.texture);
+    p3_black_car.position.set(p3CarPositionArr[3].x, p3CarPositionArr[3].y);
+    p3_black_car.interactive = true;
+    p3_black_car.on('tap', function(){
+        console.log('bc');
+        p3_02.position.set(p302PositionArr[3].x, p302PositionArr[3].y);
+        global.activeCar = 3;
+    }); 
+    
+    p3_car_group.addChild(p3_yellow_car, p3_white_car, p3_red_car, p3_black_car, p3_02);
 
-    p3_car_group.addChild(p3_yc, p3_wc);
-
+    //【确定汽车】按钮
+    var p3_04 = new PIXI.Sprite.from(res.p3_04.texture);
+    p3_04.interactive = true;
+    p3_04.position.set((app.view.width-p3_04.width)/2, p3._height-100);
+    p3_04.on('tap', function(){
+        p3.visible = false;
+        console.log(global);
+    });
 
     //内容添加到页面中
-    p3.addChild(p3_01, p3_car_group);
+    p3.addChild(p3_01, p3_car_group, p3_04);
     app.stage.addChild(p3);
 
     /**** p3页 end ****/
