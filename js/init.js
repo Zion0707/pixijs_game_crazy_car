@@ -25,6 +25,7 @@ app.loader
     {name:'p3_red_car',url:'../images/p3_red_car.png'},
     {name:'p3_white_car',url:'../images/p3_white_car.png'},
     {name:'p3_yellow_car',url:'../images/p3_yellow_car.png'},
+    {name:'p4_01',url:'../images/p4_01.png'},
 ])
 .load(setup)
 .on('progress',(loader, res)=>{
@@ -120,7 +121,7 @@ function setup(loader, res){
 
     /**** p3页 start ****/
     var p3 = new PIXI.Container();
-    // p3.visible = false;
+    p3.visible = false;
     p3.width = 750;
     p3.height = 1160;
     p3.position.set(0, (app.view.height-p3._height)/2);
@@ -201,6 +202,21 @@ function setup(loader, res){
     //内容添加到页面中
     p3.addChild(p3_01, p3_car_group, p3_04);
     app.stage.addChild(p3);
-
     /**** p3页 end ****/
+
+
+    /**** p4页 start ****/
+    var p4 = new PIXI.Container();
+    // p4.visible = false;
+    p4.width = 750;
+    p4.height = global.winHeight;
+    p4.position.set(0, (p4._width-global.winHeight)/2 );
+
+    var p4_01 = new PIXI.Sprite.from(res.p4_01.texture);
+    p4_01.position.set(0, 0);
+    p4.addChild(p4_01);
+
+
+    app.stage.addChild(p4);
+    /**** p4页 end ****/
 }
