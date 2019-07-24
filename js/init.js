@@ -218,7 +218,7 @@ function setup(loader, res){
     p4_top_group.height = 100;
     var p4_01 = new PIXI.Sprite.from(res.p4_01.texture);
     //血条
-    var p4_t_blood_text = new PIXI.Text('生命值',{
+    var p4_t_blood_text = new PIXI.Text('生命值1',{
         fontFamily:'zkkl',
         fontSize: 30,
     });
