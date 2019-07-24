@@ -17,12 +17,15 @@ app.loader
     {name:'p2_01',url:'../images/p2_01.png'},
     {name:'p2_02',url:'../images/p2_02.png'},
     {name:'p2_03',url:'../images/p2_03.png'},
+    {name:'p3_01',url:'../images/p3_01.png'},
+    {name:'p3_02',url:'../images/p3_02.png'},
+    {name:'p3_03',url:'../images/p3_03.png'},
+    {name:'p3_04',url:'../images/p3_04.png'},
 ])
 .load(setup)
 .on('progress',(loader, res)=>{
     var progress = parseInt(loader.progress);
-    console.log(progress);
-
+    // console.log(progress);
     //百分比加载
     p1_load_text.text = progress+'%';
     p1_load_text.position.set((app.view.width-p1_load_text.width)/2, 168);
@@ -81,6 +84,7 @@ app.stage.addChild(p1);
 function setup(loader, res){
     /**** p2页 start ****/
     var p2 = new PIXI.Container();
+    p2.visible = false;
     p2.width = 750;
     p2.height = 1160;
     p2.position.set(0, (app.view.height-p2._height)/2);
@@ -105,4 +109,43 @@ function setup(loader, res){
     p2.addChild(p2_01, p2_02, p2_03);
     app.stage.addChild(p2);
     /**** p2页 end ****/
+
+
+    /**** p3页 start ****/
+    var p3 = new PIXI.Container();
+    // p3.visible = false;
+    p3.width = 750;
+    p3.height = 1160;
+    p3.position.set(0, (app.view.height-p3._height)/2);
+
+    //选择标题
+    var p3_01 = new PIXI.Sprite.from(res.p3_01.texture);
+    p3_01.position.set((app.view.width-p3_01.width)/2, 40);
+
+    //汽车组
+    var p3_car_group = new PIXI.Container();
+    p3_car_group.width=p3_car_group.height=750;
+    p3_car_group.position.set(0,(p3._height-p3_car_group._height)/2);
+
+    //黄色汽车
+    var p3_yct = res.p3_03.texture;
+    var p3_yc_rectangle = new PIXI.Rectangle(0, 0, 155, 269);
+    p3_yct.frame = p3_yc_rectangle;
+    var p3_yc = new PIXI.Sprite(p3_yct);
+    p3_yc.position.set(0,0);
+    //白色汽车
+    var p3_wct = res.p3_03.texture;
+    var p3_wc_rectangle = new PIXI.Rectangle(169, 0, 155, 269);
+    p3_wct.frame = p3_wc_rectangle;
+    var p3_wc = new PIXI.Sprite(p3_wct);
+    p3_wc.position.set(169,0);
+
+    p3_car_group.addChild(p3_yc, p3_wc);
+
+
+    //内容添加到页面中
+    p3.addChild(p3_01, p3_car_group);
+    app.stage.addChild(p3);
+
+    /**** p3页 end ****/
 }
