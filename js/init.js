@@ -26,6 +26,8 @@ app.loader
     {name:'p3_white_car',url:'../images/p3_white_car.png'},
     {name:'p3_yellow_car',url:'../images/p3_yellow_car.png'},
     {name:'p4_01',url:'../images/p4_01.png'},
+    {name:'p4_02',url:'../images/p4_02.png'},
+    {name:'p4_03',url:'../images/p4_03.png'},
 ])
 .load(setup)
 .on('progress',(loader, res)=>{
@@ -210,11 +212,19 @@ function setup(loader, res){
     // p4.visible = false;
     p4.width = 750;
     p4.height = global.winHeight;
-    p4.position.set(0, (p4._width-global.winHeight)/2 );
-
+    //顶部内容
+    var p4_top_group = new PIXI.Container();
+    p4_top_group.width = 750;
+    p4_top_group.height = 100;
     var p4_01 = new PIXI.Sprite.from(res.p4_01.texture);
-    p4_01.position.set(0, 0);
-    p4.addChild(p4_01);
+    //血条
+    var p4_t_blood_text = new PIXI.Text('生命值',{
+        fontFamily:'zkkl',
+        fontSize: 30,
+    });
+
+    p4_top_group.addChild(p4_01, p4_t_blood_text);
+    p4.addChild(p4_top_group);
 
 
     app.stage.addChild(p4);
