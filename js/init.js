@@ -444,11 +444,29 @@ function setup(loader, res){
 
             //障碍物动起来
             trackBarrie['barrier1'].y+=barrieRdArr.rd1;
+            trackBarrie['barrier2'].y+=barrieRdArr.rd2;
+            trackBarrie['barrier3'].y+=barrieRdArr.rd3;
+            trackBarrie['barrier4'].y+=barrieRdArr.rd4;
             //超出了赛道，那么从另外一条道中从新开始
             if(trackBarrie['barrier1'].y>=1200){
                 var rdNum = rd(0,4);
                 trackBarrie['barrier1'].position.set(p4BarrieInTrackArr[rdNum].x, p4BarrieInTrackArr[rdNum].y );
                 barrieRdArr.rd1 = rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed);
+            }
+            if(trackBarrie['barrier2'].y>=1200){
+                var rdNum = rd(0,4);
+                trackBarrie['barrier2'].position.set(p4BarrieInTrackArr[rdNum].x, p4BarrieInTrackArr[rdNum].y );
+                barrieRdArr.rd2 = rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed);
+            }
+            if(trackBarrie['barrier3'].y>=1300){
+                var rdNum = rd(0,4);
+                trackBarrie['barrier3'].position.set(p4BarrieInTrackArr[rdNum].x, p4BarrieInTrackArr[rdNum].y );
+                barrieRdArr.rd3 = rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed);
+            }
+            if(trackBarrie['barrier4'].y>=1200){
+                var rdNum = rd(0,4);
+                trackBarrie['barrier4'].position.set(p4BarrieInTrackArr[rdNum].x, p4BarrieInTrackArr[rdNum].y );
+                barrieRdArr.rd4 = rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed);
             }
 
         }
