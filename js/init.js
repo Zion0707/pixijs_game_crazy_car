@@ -36,6 +36,7 @@ app.loader
     {name:'p4_01',url:'./images/p4_01.png'},
     {name:'p4_02',url:'./images/p4_02.png'},
     {name:'p4_03',url:'./images/p4_03.png'},
+    {name:'p4_04',url:'./images/p4_04.png'},
     {name:'p4_barrier_1',url:'./images/p4_barrier_1.png'},
     {name:'p4_barrier_2',url:'./images/p4_barrier_2.png'},
     {name:'p4_barrier_3',url:'./images/p4_barrier_3.png'},
@@ -74,6 +75,7 @@ var global={
     gameLaneSpeed: 5,//赛道速度
     gameBarrieMaxSpeed: 10,//障碍物最快速度
     gameScoreBonus: 10,//撞击金币之后的加成倍数
+    gameCountdown: 3,//启动的倒计时
 
     gameResScore:0,//总的得分分数
 }
@@ -123,7 +125,7 @@ app.stage.addChild(p1);
 function setup(loader, res){
     /**** p2页 start ****/
     var p2 = new PIXI.Container();
-    // p2.visible = false;
+    p2.visible = false;
     p2.width = 750;
     p2.height = 1160;
     p2.position.set(0, (app.view.height-p2._height)/2);
@@ -234,8 +236,34 @@ function setup(loader, res){
         p3.visible = false;
         p4.visible = true;
 
-        //游戏开关打开
-        global.gamePlay = true;
+        //倒计时图标显示出来
+        p4CountdownGroup.visible = true;
+        //圆圈图标显示
+        p4_04.rotation = 0;
+        p4_04.pivot.set(154, 154)
+        clearInterval(timer1);
+        var timer1 = setInterval(()=>{
+            p4_04.rotation-=1;
+        },20)
+
+        var cdTime = global.gameCountdown;
+        clearInterval(timer2);
+        var timer2 = setInterval(()=>{
+
+            if(cdTime>0){
+                cdTime-=1;
+                p4CountdownText.text = cdTime==0?'Go':cdTime;
+                p4CountdownText.position.set((p4_04.width-p4CountdownText.width)/2, (p4_04.height-p4CountdownText.height)/2);
+            }else{
+                //关闭倒计时
+                p4CountdownGroup.visible = false;
+                //游戏开关打开
+                global.gamePlay = true;
+                clearInterval(timer1);
+                clearInterval(timer2);
+            }
+        },1000);
+
 
         //选中的汽车在赛道上呈现：1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
         trackCar[`car${global.activeColorCar}`].visible = true;
@@ -406,8 +434,25 @@ function setup(loader, res){
     });
     p4RightBtn.position.set(488, 22);
     p4ToolGroup.addChild(p4ToolBg, p4LeftBtn, p4RightBtn);
+
+
+    //倒计时
+    var p4CountdownGroup = new PIXI.Container();
+    p4CountdownGroup.visible = false;
+    var p4_04 = new PIXI.Sprite.from(res.p4_04.texture);
+    p4_04.position.set(150,150);
+    var p4CountdownText = new PIXI.Text(global.gameCountdown ,{
+        fontFamily: 'zkkl',
+        fontSize: 150,
+        fill: 0x000000,
+        fontWeight: 'bold'
+    });
+    p4CountdownText.position.set((p4_04.width-p4CountdownText.width)/2, (p4_04.height-p4CountdownText.height)/2);
+    p4CountdownGroup.position.set((app.view.width-p4_04.width)/2, (app.view.height-p4_04.height)/2);
+    p4CountdownGroup.addChild(p4_04, p4CountdownText);
+
     //添加到页面
-    p4TopGroup.addChild(p4_01, p4_t_blood_text, p4BloodGroup, p4TotalScoreText1, p4TotalScoreText2);
+    p4TopGroup.addChild(p4_01, p4_t_blood_text, p4BloodGroup, p4TotalScoreText1, p4TotalScoreText2, p4CountdownGroup);
     p4.addChild(p4TopGroup, p4LaneGroup, p4ToolGroup);
 
     //层排序
@@ -432,6 +477,8 @@ function setup(loader, res){
     var gameOver=function(){
         //暂停游戏
         global.gamePlay = false;
+        //左右按钮不可点击
+        p4RightBtn.interactive = p4LeftBtn.interactive = false;
     }   
 
     //定时器
@@ -510,5 +557,5 @@ function setup(loader, res){
 
 
     //游戏开始函数
-    // gameStart();
+    gameStart();
 }
