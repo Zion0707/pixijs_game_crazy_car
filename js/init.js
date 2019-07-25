@@ -62,12 +62,15 @@ app.loader
 });
 
 
+//碰撞函数
+var bump = new Bump(PIXI);
+
 var global={
     winWidth: $(window).width(), //屏幕宽
     winHeight: $(window).height(), //屏幕高
     activeColorCar: 1, //1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
     
-    gamePlay: true,//控制游戏开启【true】还是关闭【false】
+    gamePlay: false,//控制游戏，开启【true】还是关闭【false】
     gameLaneSpeed: 5,//赛道速度
     gameResScore:0,//总的得分分数
     gameBarrieMaxSpeed: 10,//障碍物最快速度
@@ -225,6 +228,13 @@ function setup(loader, res){
     var randomLane=0;//随机车道
     //开始游戏的逻辑
     var startGame = function(){
+        //游戏主界面呈现
+        p3.visible = false;
+        p4.visible = true;
+
+        //游戏开关打开
+        global.gamePlay = true;
+
         //选中的汽车在赛道上呈现：1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
         trackCar[`car${global.activeColorCar}`].visible = true;
         //使汽车走到随机的车道上，但不会走到应急车道中
@@ -232,9 +242,8 @@ function setup(loader, res){
         trackCar[`car${global.activeColorCar}`].x=p4CarInTrackArr[randomLane].x;
     }
 
+    //游戏开始按钮
     p3_04.on('tap', function(){
-        p3.visible = false;
-        p4.visible = true;
         startGame();
     });
 
@@ -246,7 +255,7 @@ function setup(loader, res){
 
     /**** p4页 start ****/
     var p4 = new PIXI.Container();
-    // p4.visible = false;
+    p4.visible = false;
     p4.width = 750;
     p4.height = global.winHeight;
     //顶部内容
@@ -289,7 +298,7 @@ function setup(loader, res){
     var p4_lane1 = new PIXI.Sprite.from(res.p4_lane.texture);
     p4_lane1.position.set(0, 0);
     var p4_lane2 = new PIXI.Sprite.from(res.p4_lane.texture);
-    p4_lane2.position.set(0, -1170);
+    p4_lane2.position.set(0, -p4_lane1.height);
 
     //障碍物在赛道中的位置数组
     var p4BarrieInTrackArr=[
@@ -417,17 +426,20 @@ function setup(loader, res){
         rd4: rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed)
     }
     
+
+    //定时器
     app.ticker.add(()=>{
-        if(global.gamePlay){
+        //游戏是否开启
+        if( global.gamePlay ){
 
             //赛道动起来
             p4_lane1.y+=global.gameLaneSpeed;
             p4_lane2.y+=global.gameLaneSpeed;
-            if(p4_lane1.y>=1170){
+            if(p4_lane1.y>=p4_lane1.height){
                 p4_lane1.y=0;
             }
             if(p4_lane2.y>=0){
-                p4_lane2.y=-1170;
+                p4_lane2.y=-p4_lane1.height;
             }
 
             //总的分数相加
@@ -441,7 +453,6 @@ function setup(loader, res){
             }
             //得分显示
             p4TotalScoreText2.text=global.gameResScore=gameScore;
-
             //障碍物动起来
             trackBarrie['barrier1'].y+=barrieRdArr.rd1;
             trackBarrie['barrier2'].y+=barrieRdArr.rd2;
@@ -468,9 +479,23 @@ function setup(loader, res){
                 trackBarrie['barrier4'].position.set(p4BarrieInTrackArr[rdNum].x, p4BarrieInTrackArr[rdNum].y );
                 barrieRdArr.rd4 = rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed);
             }
-
+        
+            //汽车碰撞
+            var carBarrier1 = bump.hit(trackCar[`car${global.activeColorCar}`], trackBarrie['barrier1'], true);
+            var carBarrier2 = bump.hit(trackCar[`car${global.activeColorCar}`], trackBarrie['barrier2'], true);
+            var carBarrier3 = bump.hit(trackCar[`car${global.activeColorCar}`], trackBarrie['barrier3'], true);
+            //carBarrier4 是金币
+            var carBarrier4 = bump.hit(trackCar[`car${global.activeColorCar}`], trackBarrie['barrier4'], true);
+            if( carBarrier1 || carBarrier2 || carBarrier3 ){
+                console.log('被碰撞');
+            }else if( carBarrier4 ){
+                console.log('得到金币');
+            }
+            
         }
     });
-
     /**** p4页 end ****/
+
+
+    startGame();
 }
