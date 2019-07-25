@@ -58,7 +58,8 @@ var global={
     winWidth: $(window).width(), //屏幕宽
     winHeight: $(window).height(), //屏幕高
     activeCar: 1, //1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
-    play: false,//控制游戏进度开关
+    play: true,//控制游戏进度开关
+    laneSpeed: 1,//赛道速度
 }
 
 /**** p1页 start ****/
@@ -225,9 +226,9 @@ function setup(loader, res){
     p4.width = 750;
     p4.height = global.winHeight;
     //顶部内容
-    var p4_top_group = new PIXI.Container();
-    p4_top_group.width = 750;
-    p4_top_group.height = 100;
+    var p4TopGroup = new PIXI.Container();
+    p4TopGroup.width = 750;
+    p4TopGroup.height = 100;
 
     //背景
     var p4_01 = new PIXI.Sprite.from(res.p4_01.texture);
@@ -256,7 +257,11 @@ function setup(loader, res){
     var p4LaneGroup = new PIXI.Container();
     p4LaneGroup.position.set(0, 100);
     //赛道
-    var p4_lane = new PIXI.Sprite.from(res.p4_lane.texture);
+    var p4_lane1 = new PIXI.Sprite.from(res.p4_lane.texture);
+    p4_lane1.position.set(0, 0);
+    var p4_lane2 = new PIXI.Sprite.from(res.p4_lane.texture);
+    p4_lane2.position.set(0, -1170);
+
     //障碍物（包括金币）
     var p4_barrier_1 = new PIXI.Sprite(res.p4_barrier_1.texture);
     p4_barrier_1.position.set(150, 50);
@@ -276,7 +281,7 @@ function setup(loader, res){
     p4_white_car.position.set(400, 980);
     var p4_yellow_car = new PIXI.Sprite(res.p4_yellow_car.texture);
     p4_yellow_car.position.set(520, 980);
-    p4LaneGroup.addChild(p4_lane, p4_barrier_1, p4_barrier_2, p4_barrier_3, p4_barrier_4, p4_black_car, p4_red_car, p4_white_car, p4_yellow_car);
+    p4LaneGroup.addChild(p4_lane1, p4_lane2, p4_barrier_1, p4_barrier_2, p4_barrier_3, p4_barrier_4, p4_black_car, p4_red_car, p4_white_car, p4_yellow_car);
 
     //操作区
     var p4ToolGroup = new PIXI.Container();
@@ -303,14 +308,29 @@ function setup(loader, res){
     p4RightBtn.position.set(488, 22);
     p4ToolGroup.addChild(p4ToolBg, p4LeftBtn, p4RightBtn);
     //添加到页面
-    p4_top_group.addChild(p4_01, p4_t_blood_text, p4BloodGroup, p4TotalScore);
-    p4.addChild(p4_top_group, p4LaneGroup, p4ToolGroup);
+    p4TopGroup.addChild(p4_01, p4_t_blood_text, p4BloodGroup, p4TotalScore);
+    p4.addChild(p4TopGroup, p4LaneGroup, p4ToolGroup);
+
+    //层排序
+    p4TopGroup.zIndex = 9;
+    p4LaneGroup.zIndex=1;
+    p4.sortableChildren = true;
+
     app.stage.addChild(p4);
 
     //游戏进度开关
     app.ticker.add(()=>{
         if(global.play){
             console.log(1);
+            //赛道动起来
+            p4_lane1.y+=global.laneSpeed;
+            p4_lane2.y+=global.laneSpeed;
+            if(p4_lane1.y>=1170){
+                p4_lane1.y=0;
+            }
+            if(p4_lane2.y>=0){
+                p4_lane2.y=-1170;
+            }
         }
     });
 
