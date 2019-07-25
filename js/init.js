@@ -216,17 +216,35 @@ function setup(loader, res){
     var p4_top_group = new PIXI.Container();
     p4_top_group.width = 750;
     p4_top_group.height = 100;
+
+    //背景
     var p4_01 = new PIXI.Sprite.from(res.p4_01.texture);
+
     //血条
     var p4_t_blood_text = new PIXI.Text('生命值',{
         fontFamily:'zkkl',
         fontSize: 30,
     });
+    p4_t_blood_text.position.set(30, 33);
+    var p4BloodGroup = new PIXI.Container();
+    p4BloodGroup.width=87;
+    p4BloodGroup.height=28;
+    p4BloodGroup.position.set(137, 33);
+    var p4_t_blood_b = new PIXI.Sprite(res.p4_03.texture);
+    p4_t_blood_b.position.set(0, 0);
+    var p4_t_blood_t = new PIXI.Sprite(res.p4_02.texture);
+    p4_t_blood_t.position.set(0, 0);
+    p4BloodGroup.addChild(p4_t_blood_b, p4_t_blood_t);
+    //总得分
+    var p4TotalScore = new PIXI.Text('总得分: 0',{
+        fontFamily:'zkkl',
+        fontSize: 30,
+    });
+    p4TotalScore.position.set(275, 33);
 
-    p4_top_group.addChild(p4_01, p4_t_blood_text);
+    //添加到页面
+    p4_top_group.addChild(p4_01, p4_t_blood_text, p4BloodGroup, p4TotalScore);
     p4.addChild(p4_top_group);
-
-
     app.stage.addChild(p4);
     /**** p4页 end ****/
 }
