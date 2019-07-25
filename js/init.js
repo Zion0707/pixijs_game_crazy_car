@@ -9,25 +9,25 @@ $('#app').append(app.view);
 //资源加载
 app.loader
 .add([
-    {name:'zkkl',url:'../fonts/zkkl.ttf'},
-    {name:'p1_01',url:'../images/p1_01.png'},
-    {name:'p1_02',url:'../images/p1_02.png'},
-    {name:'p1_03',url:'../images/p1_03.png'},
-    {name:'p1_04',url:'../images/p1_04.png'},
-    {name:'p2_01',url:'../images/p2_01.png'},
-    {name:'p2_02',url:'../images/p2_02.png'},
-    {name:'p2_03',url:'../images/p2_03.png'},
-    {name:'p3_01',url:'../images/p3_01.png'},
-    {name:'p3_02',url:'../images/p3_02.png'},
-    {name:'p3_03',url:'../images/p3_03.png'},
-    {name:'p3_04',url:'../images/p3_04.png'},
-    {name:'p3_black_car',url:'../images/p3_black_car.png'},
-    {name:'p3_red_car',url:'../images/p3_red_car.png'},
-    {name:'p3_white_car',url:'../images/p3_white_car.png'},
-    {name:'p3_yellow_car',url:'../images/p3_yellow_car.png'},
-    {name:'p4_01',url:'../images/p4_01.png'},
-    {name:'p4_02',url:'../images/p4_02.png'},
-    {name:'p4_03',url:'../images/p4_03.png'},
+    {name:'zkkl',url:'./fonts/zkkl.ttf'},
+    {name:'p1_01',url:'./images/p1_01.png'},
+    {name:'p1_02',url:'./images/p1_02.png'},
+    {name:'p1_03',url:'./images/p1_03.png'},
+    {name:'p1_04',url:'./images/p1_04.png'},
+    {name:'p2_01',url:'./images/p2_01.png'},
+    {name:'p2_02',url:'./images/p2_02.png'},
+    {name:'p2_03',url:'./images/p2_03.png'},
+    {name:'p3_01',url:'./images/p3_01.png'},
+    {name:'p3_02',url:'./images/p3_02.png'},
+    {name:'p3_03',url:'./images/p3_03.png'},
+    {name:'p3_04',url:'./images/p3_04.png'},
+    {name:'p3_black_car',url:'./images/p3_black_car.png'},
+    {name:'p3_red_car',url:'./images/p3_red_car.png'},
+    {name:'p3_white_car',url:'./images/p3_white_car.png'},
+    {name:'p3_yellow_car',url:'./images/p3_yellow_car.png'},
+    {name:'p4_01',url:'./images/p4_01.png'},
+    {name:'p4_02',url:'./images/p4_02.png'},
+    {name:'p4_03',url:'./images/p4_03.png'},
 ])
 .load(setup)
 .on('progress',(loader, res)=>{
@@ -57,7 +57,7 @@ p1.height = 1160;
 p1.position.set(0, (app.view.height-p1._height)/2);
 
 //标题
-var p1_01 = new PIXI.Sprite.from('../images/p1_01.png');
+var p1_01 = new PIXI.Sprite.from('./images/p1_01.png');
 p1_01.position.set((p1._width-473)/2, 0);
 //加载文字
 var p1_load_text = new PIXI.Text('0%',{
@@ -68,7 +68,7 @@ var p1_load_text = new PIXI.Text('0%',{
 p1_load_text.position.set((app.view.width-p1_load_text.width)/2, 168);
 
 //开始按钮
-var p1_02 = new PIXI.Sprite.from('../images/p1_02.png');
+var p1_02 = new PIXI.Sprite.from('./images/p1_02.png');
 p1_02.interactive = true;
 p1_02.position.set((app.view.width-244)/2, p1._height-100);
 p1_02.visible = false;
@@ -77,11 +77,11 @@ p1_02.on('tap', function(ev){
 });
 
 //赛道图
-var p1_03 = new PIXI.Sprite.from('../images/p1_03.png');
+var p1_03 = new PIXI.Sprite.from('./images/p1_03.png');
 p1_03.position.set(0, 220);
 
 //赛道汽车图
-var p1_04 = new PIXI.Sprite.from('../images/p1_04.png');
+var p1_04 = new PIXI.Sprite.from('./images/p1_04.png');
 p1_04.position.set(0, 450);
 
 //内容添加到页面中
