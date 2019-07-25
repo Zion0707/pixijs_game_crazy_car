@@ -1,6 +1,6 @@
 /*** 工具函数开始 ***/
 //随机数生成
-function rn(min,max) {
+function rd(min,max) {
     return Math.floor(Math.random()*(max-min)+min);
 };
 /*** 工具函数结束 ***/
@@ -69,8 +69,8 @@ var global={
     
     gamePlay: true,//控制游戏开启【true】还是关闭【false】
     gameLaneSpeed: 5,//赛道速度
-    gameScore:0,//游戏定时器分数
     gameResScore:0,//总的得分分数
+    gameBarrieMaxSpeed: 10,//障碍物最快速度
 }
 
 /**** p1页 start ****/
@@ -147,7 +147,7 @@ function setup(loader, res){
 
     /**** p3页 start ****/
     var p3 = new PIXI.Container();
-    // p3.visible = false;
+    p3.visible = false;
     p3.width = 750;
     p3.height = 1160;
     p3.position.set(0, (app.view.height-p3._height)/2);
@@ -221,12 +221,15 @@ function setup(loader, res){
     p3_04.interactive = true;
     p3_04.position.set((app.view.width-p3_04.width)/2, p3._height-100);
 
+    
+    var randomLane=0;//随机车道
     //开始游戏的逻辑
     var startGame = function(){
         //选中的汽车在赛道上呈现：1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
-        trackCarGrap[`carNum${global.activeColorCar}`].visible = true;
+        trackCar[`car${global.activeColorCar}`].visible = true;
         //使汽车走到随机的车道上，但不会走到应急车道中
-        trackCarGrap[`carNum${global.activeColorCar}`].x=p4CarInTrackArr[rn(0,4)].x;
+        randomLane=rd(1,5);
+        trackCar[`car${global.activeColorCar}`].x=p4CarInTrackArr[randomLane].x;
     }
 
     p3_04.on('tap', function(){
@@ -243,7 +246,7 @@ function setup(loader, res){
 
     /**** p4页 start ****/
     var p4 = new PIXI.Container();
-    p4.visible = false;
+    // p4.visible = false;
     p4.width = 750;
     p4.height = global.winHeight;
     //顶部内容
@@ -288,53 +291,61 @@ function setup(loader, res){
     var p4_lane2 = new PIXI.Sprite.from(res.p4_lane.texture);
     p4_lane2.position.set(0, -1170);
 
-    //障碍物（包括金币）
-    var p4_barrier_1 = new PIXI.Sprite(res.p4_barrier_1.texture);
-    p4_barrier_1.position.set(150, 50);
-    var p4_barrier_2 = new PIXI.Sprite(res.p4_barrier_2.texture);
-    p4_barrier_2.position.set(275, 50);
-    var p4_barrier_3 = new PIXI.Sprite(res.p4_barrier_3.texture);
-    p4_barrier_3.position.set(400, 50);
-    var p4_barrier_4 = new PIXI.Sprite(res.p4_barrier_4.texture);
-    p4_barrier_4.position.set(515, 50);
+    //障碍物在赛道中的位置数组
+    var p4BarrieInTrackArr=[
+        {x:150, y:-150},//第一条道
+        {x:275, y:-150},//第二条道
+        {x:400, y:-150},//第三条道
+        {x:525, y:-150},//第四条道
+    ];
+    //赛道中的障碍物（包括金币）
+    var trackBarrie={};
+    trackBarrie['barrier1'] = new PIXI.Sprite(res.p4_barrier_1.texture);
+    trackBarrie['barrier1'].position.set(150, -150);
+    trackBarrie['barrier2'] = new PIXI.Sprite(res.p4_barrier_2.texture);
+    trackBarrie['barrier2'].position.set(275, -150);
+    trackBarrie['barrier3'] = new PIXI.Sprite(res.p4_barrier_3.texture);
+    trackBarrie['barrier3'].position.set(400, -150);
+    trackBarrie['barrier4'] = new PIXI.Sprite(res.p4_barrier_4.texture);
+    trackBarrie['barrier4'].position.set(525, -150);
     
     //汽车在赛道中的位置数组
     var p4CarInTrackArr=[
+        {x:15, y:980},//应急车道左道
         {x:145, y:980},//第一条道
         {x:275, y:980},//第二条道
         {x:400, y:980},//第三条道
         {x:520, y:980},//第四条道
-        {x:15, y:980},//应急车道左道
         {x:645, y:980},//应急车道右道
     ];
     //赛道中的汽车
-    var trackCarGrap={};
-    trackCarGrap['carNum1'] = new PIXI.Sprite(res.p4_yellow_car.texture);
-    trackCarGrap['carNum1'].visible = false;
-    trackCarGrap['carNum1'].position.set(520, 980);
+    var trackCar={};
+    trackCar['car1'] = new PIXI.Sprite(res.p4_yellow_car.texture);
+    trackCar['car1'].visible = false;
+    trackCar['car1'].position.set(520, 980);
 
-    trackCarGrap['carNum2'] = new PIXI.Sprite(res.p4_white_car.texture);
-    trackCarGrap['carNum2'].visible = false;
-    trackCarGrap['carNum2'].position.set(400, 980);
+    trackCar['car2'] = new PIXI.Sprite(res.p4_white_car.texture);
+    trackCar['car2'].visible = false;
+    trackCar['car2'].position.set(400, 980);
 
-    trackCarGrap['carNum3'] = new PIXI.Sprite(res.p4_red_car.texture);
-    trackCarGrap['carNum3'].visible = false;
-    trackCarGrap['carNum3'].position.set(275, 980);
+    trackCar['car3'] = new PIXI.Sprite(res.p4_red_car.texture);
+    trackCar['car3'].visible = false;
+    trackCar['car3'].position.set(275, 980);
 
-    trackCarGrap['carNum4'] = new PIXI.Sprite(res.p4_black_car.texture);
-    trackCarGrap['carNum4'].visible = false;
-    trackCarGrap['carNum4'].position.set(145, 980);
+    trackCar['car4'] = new PIXI.Sprite(res.p4_black_car.texture);
+    trackCar['car4'].visible = false;
+    trackCar['car4'].position.set(145, 980);
 
     p4LaneGroup.addChild(p4_lane1, 
                         p4_lane2, 
-                        p4_barrier_1, 
-                        p4_barrier_2, 
-                        p4_barrier_3, 
-                        p4_barrier_4,
-                        trackCarGrap['carNum1'],
-                        trackCarGrap['carNum2'],
-                        trackCarGrap['carNum3'],
-                        trackCarGrap['carNum4']);
+                        trackBarrie['barrier1'], 
+                        trackBarrie['barrier2'], 
+                        trackBarrie['barrier3'], 
+                        trackBarrie['barrier4'],
+                        trackCar['car1'],
+                        trackCar['car2'],
+                        trackCar['car3'],
+                        trackCar['car4']);
 
     //操作区
     var p4ToolGroup = new PIXI.Container();
@@ -352,11 +363,35 @@ function setup(loader, res){
     p4LeftBtn.position.set(22, 22);
     p4LeftBtn.on('tap', function(){
         console.log('向左');
+        randomLane-=1;
+        //不超出赛道
+        if( randomLane<0 ){
+            randomLane=0;
+        }
+        //汽车跑到了应急车道上了
+        if( randomLane==0 ){
+            isEmergencyLane=true;
+        }else{
+            isEmergencyLane=false;            
+        }
+        trackCar[`car${global.activeColorCar}`].x=p4CarInTrackArr[randomLane].x;
     });
     var p4RightBtn = new PIXI.Sprite.from(res.p4_right_btn.texture);
     p4RightBtn.interactive = true;
     p4RightBtn.on('tap', function(){
         console.log('向右');
+        randomLane+=1;
+        //不超出赛道
+        if( randomLane>p4CarInTrackArr.length-1 ){
+            randomLane=p4CarInTrackArr.length-1;
+        }
+        //汽车跑到了应急车道上了
+        if( randomLane==p4CarInTrackArr.length-1 ){
+            isEmergencyLane=true;
+        }else{
+            isEmergencyLane=false;            
+        }
+        trackCar[`car${global.activeColorCar}`].x=p4CarInTrackArr[randomLane].x;
     });
     p4RightBtn.position.set(488, 22);
     p4ToolGroup.addChild(p4ToolBg, p4LeftBtn, p4RightBtn);
@@ -372,6 +407,16 @@ function setup(loader, res){
     app.stage.addChild(p4);
 
     //游戏进度开关
+    var gameScore=0;
+    var isEmergencyLane=false;
+    //四个道中的障碍物随机速度
+    var barrieRdArr={
+        rd1: rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed),
+        rd2: rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed),
+        rd3: rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed),
+        rd4: rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed)
+    }
+    
     app.ticker.add(()=>{
         if(global.gamePlay){
 
@@ -385,9 +430,27 @@ function setup(loader, res){
                 p4_lane2.y=-1170;
             }
 
-            //分数相加
-            global.gameScore+=1;
-            p4TotalScoreText2.text=global.gameResScore=parseInt(global.gameScore/100);
+            //总的分数相加
+            if(isEmergencyLane){
+                gameScore-=1;
+            }else{
+                gameScore+=1;
+            }
+            if(gameScore<0){
+                gameScore=0;
+            }
+            //得分显示
+            p4TotalScoreText2.text=global.gameResScore=gameScore;
+
+            //障碍物动起来
+            trackBarrie['barrier1'].y+=barrieRdArr.rd1;
+            //超出了赛道，那么从另外一条道中从新开始
+            if(trackBarrie['barrier1'].y>=1200){
+                var rdNum = rd(0,4);
+                trackBarrie['barrier1'].position.set(p4BarrieInTrackArr[rdNum].x, p4BarrieInTrackArr[rdNum].y );
+                barrieRdArr.rd1 = rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed);
+            }
+
         }
     });
 
