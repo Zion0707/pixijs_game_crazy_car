@@ -28,6 +28,17 @@ app.loader
     {name:'p4_01',url:'./images/p4_01.png'},
     {name:'p4_02',url:'./images/p4_02.png'},
     {name:'p4_03',url:'./images/p4_03.png'},
+    {name:'p4_barrier_1',url:'./images/p4_barrier_1.png'},
+    {name:'p4_barrier_2',url:'./images/p4_barrier_2.png'},
+    {name:'p4_barrier_3',url:'./images/p4_barrier_3.png'},
+    {name:'p4_barrier_4',url:'./images/p4_barrier_4.png'},
+    {name:'p4_car_1',url:'./images/p4_car_1.png'},
+    {name:'p4_car_2',url:'./images/p4_car_2.png'},
+    {name:'p4_car_3',url:'./images/p4_car_3.png'},
+    {name:'p4_car_4',url:'./images/p4_car_4.png'},
+    {name:'p4_lane',url:'./images/p4_lane.png'},
+    {name:'p4_left_btn',url:'./images/p4_left_btn.png'},
+    {name:'p4_right_btn',url:'./images/p4_right_btn.png'},
 ])
 .load(setup)
 .on('progress',(loader, res)=>{
@@ -242,9 +253,61 @@ function setup(loader, res){
     });
     p4TotalScore.position.set(275, 33);
 
+    //赛道、障碍物及汽车
+    var p4LaneGroup = new PIXI.Container();
+    p4LaneGroup.position.set(0, 100);
+    //赛道
+    var p4_lane = new PIXI.Sprite.from(res.p4_lane.texture);
+    //障碍物（包括金币）
+    var p4_barrier_1 = new PIXI.Sprite(res.p4_barrier_1.texture);
+    p4_barrier_1.position.set(150, 50);
+    var p4_barrier_2 = new PIXI.Sprite(res.p4_barrier_2.texture);
+    p4_barrier_2.position.set(275, 50);
+    var p4_barrier_3 = new PIXI.Sprite(res.p4_barrier_3.texture);
+    p4_barrier_3.position.set(400, 50);
+    var p4_barrier_4 = new PIXI.Sprite(res.p4_barrier_4.texture);
+    p4_barrier_4.position.set(515, 50);
+    
+    //赛道汽车
+    var p4_car_1 = new PIXI.Sprite(res.p4_car_1.texture);
+    p4_car_1.position.set(145, 980);
+    var p4_car_2 = new PIXI.Sprite(res.p4_car_2.texture);
+    p4_car_2.position.set(275, 980);
+    var p4_car_3 = new PIXI.Sprite(res.p4_car_3.texture);
+    p4_car_3.position.set(400, 980);
+    var p4_car_4 = new PIXI.Sprite(res.p4_car_4.texture);
+    p4_car_4.position.set(520, 980);
+    p4LaneGroup.addChild(p4_lane, p4_barrier_1, p4_barrier_2, p4_barrier_3, p4_barrier_4, p4_car_1, p4_car_2, p4_car_3, p4_car_4);
+
+    //操作区
+    var p4ToolGroup = new PIXI.Container();
+    p4ToolGroup.width=750;
+    p4ToolGroup.height=149;
+    p4ToolGroup.position.set(0, app.view.height-p4ToolGroup._height);
+    //背景
+    var p4ToolBg = new PIXI.Graphics();
+    p4ToolBg.beginFill(0xff9500);
+    p4ToolBg.drawRect(0,0,750,149);
+    p4ToolBg.endFill();
+    //左右按钮
+    var p4LeftBtn = new PIXI.Sprite.from(res.p4_left_btn.texture);
+    p4LeftBtn.interactive = true;
+    p4LeftBtn.position.set(22, 22);
+    p4LeftBtn.on('tap', function(){
+        console.log('向左');
+    });
+    var p4RightBtn = new PIXI.Sprite.from(res.p4_right_btn.texture);
+    p4RightBtn.interactive = true;
+    p4RightBtn.on('tap', function(){
+        console.log('向右');
+    });
+    p4RightBtn.position.set(488, 22);
+    p4ToolGroup.addChild(p4ToolBg, p4LeftBtn, p4RightBtn);
+
+
     //添加到页面
     p4_top_group.addChild(p4_01, p4_t_blood_text, p4BloodGroup, p4TotalScore);
-    p4.addChild(p4_top_group);
+    p4.addChild(p4_top_group, p4LaneGroup, p4ToolGroup);
     app.stage.addChild(p4);
     /**** p4页 end ****/
 }
