@@ -57,7 +57,8 @@ app.loader
 var global={
     winWidth: $(window).width(), //屏幕宽
     winHeight: $(window).height(), //屏幕高
-    activeCar:1, //1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
+    activeCar: 1, //1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
+    play: false,//控制游戏进度开关
 }
 
 /**** p1页 start ****/
@@ -238,8 +239,6 @@ function setup(loader, res){
     });
     p4_t_blood_text.position.set(30, 33);
     var p4BloodGroup = new PIXI.Container();
-    p4BloodGroup.width=87;
-    p4BloodGroup.height=28;
     p4BloodGroup.position.set(137, 33);
     var p4_t_blood_b = new PIXI.Sprite(res.p4_03.texture);
     p4_t_blood_b.position.set(0, 0);
@@ -303,11 +302,17 @@ function setup(loader, res){
     });
     p4RightBtn.position.set(488, 22);
     p4ToolGroup.addChild(p4ToolBg, p4LeftBtn, p4RightBtn);
-
-
     //添加到页面
     p4_top_group.addChild(p4_01, p4_t_blood_text, p4BloodGroup, p4TotalScore);
     p4.addChild(p4_top_group, p4LaneGroup, p4ToolGroup);
     app.stage.addChild(p4);
+
+    //游戏进度开关
+    app.ticker.add(()=>{
+        if(global.play){
+            console.log(1);
+        }
+    });
+
     /**** p4页 end ****/
 }
