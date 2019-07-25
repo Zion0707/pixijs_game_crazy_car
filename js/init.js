@@ -72,8 +72,10 @@ var global={
     
     gamePlay: false,//控制游戏，开启【true】还是关闭【false】
     gameLaneSpeed: 5,//赛道速度
-    gameResScore:0,//总的得分分数
     gameBarrieMaxSpeed: 10,//障碍物最快速度
+    gameScoreBonus: 10,//撞击金币之后的加成倍数
+
+    gameResScore:0,//总的得分分数
 }
 
 /**** p1页 start ****/
@@ -121,7 +123,7 @@ app.stage.addChild(p1);
 function setup(loader, res){
     /**** p2页 start ****/
     var p2 = new PIXI.Container();
-    p2.visible = false;
+    // p2.visible = false;
     p2.width = 750;
     p2.height = 1160;
     p2.position.set(0, (app.view.height-p2._height)/2);
@@ -227,7 +229,7 @@ function setup(loader, res){
     
     var randomLane=0;//随机车道
     //开始游戏的逻辑
-    var startGame = function(){
+    var gameStart = function(){
         //游戏主界面呈现
         p3.visible = false;
         p4.visible = true;
@@ -244,7 +246,7 @@ function setup(loader, res){
 
     //游戏开始按钮
     p3_04.on('tap', function(){
-        startGame();
+        gameStart();
     });
 
     //内容添加到页面中
@@ -321,8 +323,8 @@ function setup(loader, res){
     //汽车在赛道中的位置数组
     var p4CarInTrackArr=[
         {x:15, y:980},//应急车道左道
-        {x:145, y:980},//第一条道
-        {x:275, y:980},//第二条道
+        {x:140, y:980},//第一条道
+        {x:270, y:980},//第二条道
         {x:400, y:980},//第三条道
         {x:520, y:980},//第四条道
         {x:645, y:980},//应急车道右道
@@ -426,6 +428,11 @@ function setup(loader, res){
         rd4: rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed)
     }
     
+    //游戏结束执行函数
+    var gameOver=function(){
+        //暂停游戏
+        global.gamePlay = false;
+    }   
 
     //定时器
     app.ticker.add(()=>{
@@ -478,6 +485,7 @@ function setup(loader, res){
                 var rdNum = rd(0,4);
                 trackBarrie['barrier4'].position.set(p4BarrieInTrackArr[rdNum].x, p4BarrieInTrackArr[rdNum].y );
                 barrieRdArr.rd4 = rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed);
+                trackBarrie['barrier4'].visible = true;
             }
         
             //汽车碰撞
@@ -485,11 +493,15 @@ function setup(loader, res){
             var carBarrier2 = bump.hit(trackCar[`car${global.activeColorCar}`], trackBarrie['barrier2'], true);
             var carBarrier3 = bump.hit(trackCar[`car${global.activeColorCar}`], trackBarrie['barrier3'], true);
             //carBarrier4 是金币
-            var carBarrier4 = bump.hit(trackCar[`car${global.activeColorCar}`], trackBarrie['barrier4'], true);
+            var carBarrier4 = bump.hit(trackCar[`car${global.activeColorCar}`], trackBarrie['barrier4']);
             if( carBarrier1 || carBarrier2 || carBarrier3 ){
                 console.log('被碰撞');
+
+                gameOver();
             }else if( carBarrier4 ){
                 console.log('得到金币');
+                trackBarrie['barrier4'].visible = false;
+                gameScore+=global.gameScoreBonus;
             }
             
         }
@@ -497,5 +509,6 @@ function setup(loader, res){
     /**** p4页 end ****/
 
 
-    startGame();
+    //游戏开始函数
+    // gameStart();
 }
