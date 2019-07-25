@@ -32,10 +32,10 @@ app.loader
     {name:'p4_barrier_2',url:'./images/p4_barrier_2.png'},
     {name:'p4_barrier_3',url:'./images/p4_barrier_3.png'},
     {name:'p4_barrier_4',url:'./images/p4_barrier_4.png'},
-    {name:'p4_car_1',url:'./images/p4_car_1.png'},
-    {name:'p4_car_2',url:'./images/p4_car_2.png'},
-    {name:'p4_car_3',url:'./images/p4_car_3.png'},
-    {name:'p4_car_4',url:'./images/p4_car_4.png'},
+    {name:'p4_black_car',url:'./images/p4_black_car.png'},
+    {name:'p4_red_car',url:'./images/p4_red_car.png'},
+    {name:'p4_white_car',url:'./images/p4_white_car.png'},
+    {name:'p4_yellow_car',url:'./images/p4_yellow_car.png'},
     {name:'p4_lane',url:'./images/p4_lane.png'},
     {name:'p4_left_btn',url:'./images/p4_left_btn.png'},
     {name:'p4_right_btn',url:'./images/p4_right_btn.png'},
@@ -57,7 +57,7 @@ app.loader
 var global={
     winWidth: $(window).width(), //屏幕宽
     winHeight: $(window).height(), //屏幕高
-    activeCar:0, //0：黄色汽车, 1：白色汽车, 2：红色汽车, 3：黑色汽车
+    activeCar:1, //1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
 }
 
 /**** p1页 start ****/
@@ -171,7 +171,7 @@ function setup(loader, res){
     p3_yellow_car.on('tap', function(){
         console.log('yc');
         p3_02.position.set(p302PositionArr[0].x, p302PositionArr[0].y);
-        global.activeCar = 0;
+        global.activeCar = 1;
     }); 
     //白色汽车
     var p3_white_car = new PIXI.Sprite.from(res.p3_white_car.texture);
@@ -180,7 +180,7 @@ function setup(loader, res){
     p3_white_car.on('tap', function(){
         console.log('wc');
         p3_02.position.set(p302PositionArr[1].x, p302PositionArr[1].y);
-        global.activeCar = 1;
+        global.activeCar = 2;
     }); 
     //红色汽车
     var p3_red_car = new PIXI.Sprite.from(res.p3_red_car.texture);
@@ -189,7 +189,7 @@ function setup(loader, res){
     p3_red_car.on('tap', function(){
         console.log('rc');
         p3_02.position.set(p302PositionArr[2].x, p302PositionArr[2].y);
-        global.activeCar = 2;
+        global.activeCar = 3;
     }); 
     //黑色汽车
     var p3_black_car = new PIXI.Sprite.from(res.p3_black_car.texture);
@@ -198,7 +198,7 @@ function setup(loader, res){
     p3_black_car.on('tap', function(){
         console.log('bc');
         p3_02.position.set(p302PositionArr[3].x, p302PositionArr[3].y);
-        global.activeCar = 3;
+        global.activeCar = 4;
     }); 
     
     p3_car_group.addChild(p3_yellow_car, p3_white_car, p3_red_car, p3_black_car, p3_02);
@@ -269,15 +269,15 @@ function setup(loader, res){
     p4_barrier_4.position.set(515, 50);
     
     //赛道汽车
-    var p4_car_1 = new PIXI.Sprite(res.p4_car_1.texture);
-    p4_car_1.position.set(145, 980);
-    var p4_car_2 = new PIXI.Sprite(res.p4_car_2.texture);
-    p4_car_2.position.set(275, 980);
-    var p4_car_3 = new PIXI.Sprite(res.p4_car_3.texture);
-    p4_car_3.position.set(400, 980);
-    var p4_car_4 = new PIXI.Sprite(res.p4_car_4.texture);
-    p4_car_4.position.set(520, 980);
-    p4LaneGroup.addChild(p4_lane, p4_barrier_1, p4_barrier_2, p4_barrier_3, p4_barrier_4, p4_car_1, p4_car_2, p4_car_3, p4_car_4);
+    var p4_black_car = new PIXI.Sprite(res.p4_black_car.texture);
+    p4_black_car.position.set(145, 980);
+    var p4_red_car = new PIXI.Sprite(res.p4_red_car.texture);
+    p4_red_car.position.set(275, 980);
+    var p4_white_car = new PIXI.Sprite(res.p4_white_car.texture);
+    p4_white_car.position.set(400, 980);
+    var p4_yellow_car = new PIXI.Sprite(res.p4_yellow_car.texture);
+    p4_yellow_car.position.set(520, 980);
+    p4LaneGroup.addChild(p4_lane, p4_barrier_1, p4_barrier_2, p4_barrier_3, p4_barrier_4, p4_black_car, p4_red_car, p4_white_car, p4_yellow_car);
 
     //操作区
     var p4ToolGroup = new PIXI.Container();
