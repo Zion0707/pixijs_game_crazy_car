@@ -1,3 +1,11 @@
+/*** 工具函数开始 ***/
+//随机数生成
+function rn(min,max) {
+    return Math.floor(Math.random()*(max-min)+min);
+};
+/*** 工具函数结束 ***/
+
+
 //搭建舞台
 var app = new PIXI.Application({
     width: 750,
@@ -10,10 +18,10 @@ $('#app').append(app.view);
 app.loader
 .add([
     {name:'zkkl',url:'./fonts/zkkl.ttf'},
-    {name:'p1_01',url:'./images/p1_01.png'},
-    {name:'p1_02',url:'./images/p1_02.png'},
-    {name:'p1_03',url:'./images/p1_03.png'},
-    {name:'p1_04',url:'./images/p1_04.png'},
+    // {name:'p1_01',url:'./images/p1_01.png'},
+    // {name:'p1_02',url:'./images/p1_02.png'},
+    // {name:'p1_03',url:'./images/p1_03.png'},
+    // {name:'p1_04',url:'./images/p1_04.png'},
     {name:'p2_01',url:'./images/p2_01.png'},
     {name:'p2_02',url:'./images/p2_02.png'},
     {name:'p2_03',url:'./images/p2_03.png'},
@@ -57,9 +65,12 @@ app.loader
 var global={
     winWidth: $(window).width(), //屏幕宽
     winHeight: $(window).height(), //屏幕高
-    activeCar: 1, //1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
-    play: true,//控制游戏进度开关
-    laneSpeed: 1,//赛道速度
+    activeColorCar: 1, //1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
+    
+    gamePlay: true,//控制游戏开启【true】还是关闭【false】
+    gameLaneSpeed: 5,//赛道速度
+    gameScore:0,//游戏定时器分数
+    gameResScore:0,//总的得分分数
 }
 
 /**** p1页 start ****/
@@ -136,7 +147,7 @@ function setup(loader, res){
 
     /**** p3页 start ****/
     var p3 = new PIXI.Container();
-    p3.visible = false;
+    // p3.visible = false;
     p3.width = 750;
     p3.height = 1160;
     p3.position.set(0, (app.view.height-p3._height)/2);
@@ -171,36 +182,36 @@ function setup(loader, res){
     p3_yellow_car.position.set(p3CarPositionArr[0].x, p3CarPositionArr[0].y);
     p3_yellow_car.interactive = true;
     p3_yellow_car.on('tap', function(){
-        console.log('yc');
+        console.log('黄色汽车');
         p3_02.position.set(p302PositionArr[0].x, p302PositionArr[0].y);
-        global.activeCar = 1;
+        global.activeColorCar = 1;
     }); 
     //白色汽车
     var p3_white_car = new PIXI.Sprite.from(res.p3_white_car.texture);
     p3_white_car.position.set(p3CarPositionArr[1].x, p3CarPositionArr[1].y);
     p3_white_car.interactive = true;
     p3_white_car.on('tap', function(){
-        console.log('wc');
+        console.log('白色汽车');
         p3_02.position.set(p302PositionArr[1].x, p302PositionArr[1].y);
-        global.activeCar = 2;
+        global.activeColorCar = 2;
     }); 
     //红色汽车
     var p3_red_car = new PIXI.Sprite.from(res.p3_red_car.texture);
     p3_red_car.position.set(p3CarPositionArr[2].x, p3CarPositionArr[2].y);
     p3_red_car.interactive = true;
     p3_red_car.on('tap', function(){
-        console.log('rc');
+        console.log('红色汽车');
         p3_02.position.set(p302PositionArr[2].x, p302PositionArr[2].y);
-        global.activeCar = 3;
+        global.activeColorCar = 3;
     }); 
     //黑色汽车
     var p3_black_car = new PIXI.Sprite.from(res.p3_black_car.texture);
     p3_black_car.position.set(p3CarPositionArr[3].x, p3CarPositionArr[3].y);
     p3_black_car.interactive = true;
     p3_black_car.on('tap', function(){
-        console.log('bc');
+        console.log('黑色汽车');
         p3_02.position.set(p302PositionArr[3].x, p302PositionArr[3].y);
-        global.activeCar = 4;
+        global.activeColorCar = 4;
     }); 
     
     p3_car_group.addChild(p3_yellow_car, p3_white_car, p3_red_car, p3_black_car, p3_02);
@@ -209,9 +220,19 @@ function setup(loader, res){
     var p3_04 = new PIXI.Sprite.from(res.p3_04.texture);
     p3_04.interactive = true;
     p3_04.position.set((app.view.width-p3_04.width)/2, p3._height-100);
+
+    //开始游戏的逻辑
+    var startGame = function(){
+        //选中的汽车在赛道上呈现：1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
+        trackCarGrap[`carNum${global.activeColorCar}`].visible = true;
+        //使汽车走到随机的车道上，但不会走到应急车道中
+        trackCarGrap[`carNum${global.activeColorCar}`].x=p4CarInTrackArr[rn(0,4)].x;
+    }
+
     p3_04.on('tap', function(){
         p3.visible = false;
-        console.log(global);
+        p4.visible = true;
+        startGame();
     });
 
     //内容添加到页面中
@@ -222,7 +243,7 @@ function setup(loader, res){
 
     /**** p4页 start ****/
     var p4 = new PIXI.Container();
-    // p4.visible = false;
+    p4.visible = false;
     p4.width = 750;
     p4.height = global.winHeight;
     //顶部内容
@@ -247,11 +268,16 @@ function setup(loader, res){
     p4_t_blood_t.position.set(0, 0);
     p4BloodGroup.addChild(p4_t_blood_b, p4_t_blood_t);
     //总得分
-    var p4TotalScore = new PIXI.Text('总得分: 0',{
+    var p4TotalScoreText1 = new PIXI.Text('总得分: ',{
         fontFamily:'zkkl',
         fontSize: 30,
     });
-    p4TotalScore.position.set(275, 33);
+    p4TotalScoreText1.position.set(275, 33);
+    var p4TotalScoreText2 = new PIXI.Text('0',{
+        fontFamily:'zkkl',
+        fontSize: 30,
+    });
+    p4TotalScoreText2.position.set(275+p4TotalScoreText1.width, 33);
 
     //赛道、障碍物及汽车
     var p4LaneGroup = new PIXI.Container();
@@ -272,26 +298,53 @@ function setup(loader, res){
     var p4_barrier_4 = new PIXI.Sprite(res.p4_barrier_4.texture);
     p4_barrier_4.position.set(515, 50);
     
-    //赛道汽车
-    var p4_black_car = new PIXI.Sprite(res.p4_black_car.texture);
-    p4_black_car.position.set(145, 980);
-    var p4_red_car = new PIXI.Sprite(res.p4_red_car.texture);
-    p4_red_car.position.set(275, 980);
-    var p4_white_car = new PIXI.Sprite(res.p4_white_car.texture);
-    p4_white_car.position.set(400, 980);
-    var p4_yellow_car = new PIXI.Sprite(res.p4_yellow_car.texture);
-    p4_yellow_car.position.set(520, 980);
-    p4LaneGroup.addChild(p4_lane1, p4_lane2, p4_barrier_1, p4_barrier_2, p4_barrier_3, p4_barrier_4, p4_black_car, p4_red_car, p4_white_car, p4_yellow_car);
+    //汽车在赛道中的位置数组
+    var p4CarInTrackArr=[
+        {x:145, y:980},//第一条道
+        {x:275, y:980},//第二条道
+        {x:400, y:980},//第三条道
+        {x:520, y:980},//第四条道
+        {x:15, y:980},//应急车道左道
+        {x:645, y:980},//应急车道右道
+    ];
+    //赛道中的汽车
+    var trackCarGrap={};
+    trackCarGrap['carNum1'] = new PIXI.Sprite(res.p4_yellow_car.texture);
+    trackCarGrap['carNum1'].visible = false;
+    trackCarGrap['carNum1'].position.set(520, 980);
+
+    trackCarGrap['carNum2'] = new PIXI.Sprite(res.p4_white_car.texture);
+    trackCarGrap['carNum2'].visible = false;
+    trackCarGrap['carNum2'].position.set(400, 980);
+
+    trackCarGrap['carNum3'] = new PIXI.Sprite(res.p4_red_car.texture);
+    trackCarGrap['carNum3'].visible = false;
+    trackCarGrap['carNum3'].position.set(275, 980);
+
+    trackCarGrap['carNum4'] = new PIXI.Sprite(res.p4_black_car.texture);
+    trackCarGrap['carNum4'].visible = false;
+    trackCarGrap['carNum4'].position.set(145, 980);
+
+    p4LaneGroup.addChild(p4_lane1, 
+                        p4_lane2, 
+                        p4_barrier_1, 
+                        p4_barrier_2, 
+                        p4_barrier_3, 
+                        p4_barrier_4,
+                        trackCarGrap['carNum1'],
+                        trackCarGrap['carNum2'],
+                        trackCarGrap['carNum3'],
+                        trackCarGrap['carNum4']);
 
     //操作区
     var p4ToolGroup = new PIXI.Container();
     p4ToolGroup.width=750;
-    p4ToolGroup.height=149;
+    p4ToolGroup.height=150;
     p4ToolGroup.position.set(0, app.view.height-p4ToolGroup._height);
     //背景
     var p4ToolBg = new PIXI.Graphics();
     p4ToolBg.beginFill(0xff9500);
-    p4ToolBg.drawRect(0,0,750,149);
+    p4ToolBg.drawRect(0,0,750,150);
     p4ToolBg.endFill();
     //左右按钮
     var p4LeftBtn = new PIXI.Sprite.from(res.p4_left_btn.texture);
@@ -308,29 +361,33 @@ function setup(loader, res){
     p4RightBtn.position.set(488, 22);
     p4ToolGroup.addChild(p4ToolBg, p4LeftBtn, p4RightBtn);
     //添加到页面
-    p4TopGroup.addChild(p4_01, p4_t_blood_text, p4BloodGroup, p4TotalScore);
+    p4TopGroup.addChild(p4_01, p4_t_blood_text, p4BloodGroup, p4TotalScoreText1, p4TotalScoreText2);
     p4.addChild(p4TopGroup, p4LaneGroup, p4ToolGroup);
 
     //层排序
-    p4TopGroup.zIndex = 9;
-    p4LaneGroup.zIndex=1;
+    p4TopGroup.zIndex = p4ToolGroup.zIndex = 2;
+    p4LaneGroup.zIndex = 1;
     p4.sortableChildren = true;
 
     app.stage.addChild(p4);
 
     //游戏进度开关
     app.ticker.add(()=>{
-        if(global.play){
-            console.log(1);
+        if(global.gamePlay){
+
             //赛道动起来
-            p4_lane1.y+=global.laneSpeed;
-            p4_lane2.y+=global.laneSpeed;
+            p4_lane1.y+=global.gameLaneSpeed;
+            p4_lane2.y+=global.gameLaneSpeed;
             if(p4_lane1.y>=1170){
                 p4_lane1.y=0;
             }
             if(p4_lane2.y>=0){
                 p4_lane2.y=-1170;
             }
+
+            //分数相加
+            global.gameScore+=1;
+            p4TotalScoreText2.text=global.gameResScore=parseInt(global.gameScore/100);
         }
     });
 
