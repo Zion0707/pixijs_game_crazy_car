@@ -87,7 +87,7 @@ var global={
     gameCountdown: 3,//启动的倒计时
     gameActiveColorCar: 1, //1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
     gameResScore:0,//总的得分分数
-    gamePlusSpeed:0.1,//每秒增加的游戏速度
+    gamePlusSpeed:0.05,//每秒增加的游戏速度
 }
 
 /**** p1页 start ****/
@@ -253,6 +253,12 @@ function setup(loader, res){
 
         //数据重置
         _plusSpeed = 0;
+        barrieRdArr={
+            rd1: rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed),
+            rd2: rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed),
+            rd3: rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed),
+            rd4: rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed)
+        };
         //总分重置
         p4TotalScoreText2.text = global.gameResScore = 0;
         //障碍物重置
@@ -503,8 +509,7 @@ function setup(loader, res){
         rd2: rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed),
         rd3: rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed),
         rd4: rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed)
-    }
-    
+    };
     //游戏结束执行函数
     var gameOver=function(){
         //暂停游戏
