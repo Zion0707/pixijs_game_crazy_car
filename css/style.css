@@ -25,3 +25,9 @@ body{
     font-family: "zkkl"; 
     src: url("../fonts/zkkl.ttf"); 
 } 
+
+@media screen and (max-height: 720px) {
+    #app canvas{
+        height:100%;
+    }
+}
