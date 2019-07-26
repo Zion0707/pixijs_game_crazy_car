@@ -296,19 +296,6 @@ function setup(loader, res){
     //背景
     var p4_01 = new PIXI.Sprite.from(res.p4_01.texture);
 
-    //血条
-    var p4_t_blood_text = new PIXI.Text('生命值',{
-        fontFamily:'zkkl',
-        fontSize: 30,
-    });
-    p4_t_blood_text.position.set(30, 33);
-    var p4BloodGroup = new PIXI.Container();
-    p4BloodGroup.position.set(137, 33);
-    var p4_t_blood_b = new PIXI.Sprite(res.p4_03.texture);
-    p4_t_blood_b.position.set(0, 0);
-    var p4_t_blood_t = new PIXI.Sprite(res.p4_02.texture);
-    p4_t_blood_t.position.set(0, 0);
-    p4BloodGroup.addChild(p4_t_blood_b, p4_t_blood_t);
     //总得分
     var p4TotalScoreText1 = new PIXI.Text('总得分: ',{
         fontFamily:'zkkl',
@@ -452,7 +439,7 @@ function setup(loader, res){
     p4CountdownGroup.addChild(p4_04, p4CountdownText);
 
     //添加到页面
-    p4TopGroup.addChild(p4_01, p4_t_blood_text, p4BloodGroup, p4TotalScoreText1, p4TotalScoreText2, p4CountdownGroup);
+    p4TopGroup.addChild(p4_01, p4TotalScoreText1, p4TotalScoreText2, p4CountdownGroup);
     p4.addChild(p4TopGroup, p4LaneGroup, p4ToolGroup);
 
     //层排序
@@ -556,6 +543,18 @@ function setup(loader, res){
     /**** p4页 end ****/
 
 
+    /**** p5页 start ****/
+    var p5 = new PIXI.Container();
+    // p5.visible = false;
+    p5.width = 750;
+    p5.height = 1160;
+    p5.position.set(0, (app.view.height-p5._height)/2);
+    
+
+    app.stage.addChild(p5);
+    /**** p5页 end ****/
+
+
     //游戏开始函数
-    gameStart();
+    // gameStart();
 }
