@@ -81,12 +81,13 @@ var global={
     winHeight: $(window).height(), //屏幕高
 
     gamePlay: false,//控制游戏，开启【true】还是关闭【false】
-    gameLaneSpeed: 10,//赛道速度
-    gameBarrieMaxSpeed: 20,//障碍物最快速度
+    gameLaneSpeed: 5,//赛道速度
+    gameBarrieMaxSpeed: 10,//障碍物最快速度
     gameScoreBonus: 10,//撞击金币之后的加成倍数
     gameCountdown: 3,//启动的倒计时
     gameActiveColorCar: 1, //1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
     gameResScore:0,//总的得分分数
+    gamePlusSpeed:0.1,//每秒增加的游戏速度
 }
 
 /**** p1页 start ****/
@@ -241,7 +242,8 @@ function setup(loader, res){
     p3_04.position.set((app.view.width-p3_04.width)/2, p3._height-100);
 
     
-    var randomLane=0;//随机车道
+    var _randomLane=0;//随机车道
+    var _plusSpeed=0;//根据时间段增加速度，增加游戏难度
     //开始游戏的逻辑
     var gameStart = function(){
         console.log('game start');
@@ -250,6 +252,7 @@ function setup(loader, res){
         p4.visible = true;
 
         //数据重置
+        _plusSpeed = 0;
         //总分重置
         p4TotalScoreText2.text = global.gameResScore = 0;
         //障碍物重置
@@ -268,8 +271,8 @@ function setup(loader, res){
         p4_04.pivot.set(154, 154);
 
         var cdTime = global.gameCountdown;
-        clearInterval(timer);
-        var timer = setInterval(()=>{
+        clearInterval(timer1);
+        var timer1 = setInterval(()=>{
             if(cdTime>0){
                 cdTime-=1;
                 p4CountdownText.text = cdTime==0?'Go':cdTime;
@@ -279,16 +282,22 @@ function setup(loader, res){
                 p4CountdownGroup.visible = false;
                 //游戏开关打开
                 global.gamePlay = true;
-                clearInterval(timer);
+                clearInterval(timer1);
             }
+        },1000);
+        
+        //游戏速度
+        clearInterval(timer2);
+        var timer2 = setInterval(()=>{
+            _plusSpeed+=global.gamePlusSpeed;
         },1000);
 
 
         //选中的汽车在赛道上呈现：1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
         trackCar[`car${global.gameActiveColorCar}`].visible = true;
         //使汽车走到随机的车道上，但不会走到应急车道中
-        randomLane=rd(1,5);
-        trackCar[`car${global.gameActiveColorCar}`].x=p4CarInTrackArr[randomLane].x;
+        _randomLane=rd(1,5);
+        trackCar[`car${global.gameActiveColorCar}`].x=p4CarInTrackArr[_randomLane].x;
     }
 
     //游戏开始按钮
@@ -410,18 +419,18 @@ function setup(loader, res){
     //向左函数
     function goLeft(){
         // console.log('←');
-        randomLane-=1;
+        _randomLane-=1;
         //不超出赛道
-        if( randomLane<0 ){
-            randomLane=0;
+        if( _randomLane<0 ){
+            _randomLane=0;
         }
         //汽车跑到了应急车道上了
-        if( randomLane==0 ){
+        if( _randomLane==0 ){
             isEmergencyLane=true;
         }else{
             isEmergencyLane=false;            
         }
-        trackCar[`car${global.gameActiveColorCar}`].x=p4CarInTrackArr[randomLane].x;
+        trackCar[`car${global.gameActiveColorCar}`].x=p4CarInTrackArr[_randomLane].x;
     }
     p4LeftBtn.on('tap', goLeft);
 
@@ -432,18 +441,18 @@ function setup(loader, res){
     //向右函数
     function goRight(){
         // console.log('→');
-        randomLane+=1;
+        _randomLane+=1;
         //不超出赛道
-        if( randomLane>p4CarInTrackArr.length-1 ){
-            randomLane=p4CarInTrackArr.length-1;
+        if( _randomLane>p4CarInTrackArr.length-1 ){
+            _randomLane=p4CarInTrackArr.length-1;
         }
         //汽车跑到了应急车道上了
-        if( randomLane==p4CarInTrackArr.length-1 ){
+        if( _randomLane==p4CarInTrackArr.length-1 ){
             isEmergencyLane=true;
         }else{
             isEmergencyLane=false;            
         }
-        trackCar[`car${global.gameActiveColorCar}`].x=p4CarInTrackArr[randomLane].x;
+        trackCar[`car${global.gameActiveColorCar}`].x=p4CarInTrackArr[_randomLane].x;
     }
     p4RightBtn.on('tap', goRight);
 
@@ -537,8 +546,9 @@ function setup(loader, res){
         if( global.gamePlay ){
 
             //赛道动起来
-            p4_lane1.y+=global.gameLaneSpeed;
-            p4_lane2.y+=global.gameLaneSpeed;
+            p4_lane1.y = p4_lane1.y+global.gameLaneSpeed+_plusSpeed;
+            p4_lane2.y = p4_lane2.y+global.gameLaneSpeed+_plusSpeed;
+            
             if(p4_lane1.y>=p4_lane1.height){
                 p4_lane1.y=0;
             }
@@ -566,22 +576,22 @@ function setup(loader, res){
             if(trackBarrie['barrier1'].y>=1200){
                 var rdNum = rd(0,4);
                 trackBarrie['barrier1'].position.set(p4BarrieInTrackArr[rdNum].x, p4BarrieInTrackArr[rdNum].y );
-                barrieRdArr.rd1 = rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed);
+                barrieRdArr.rd1 = rd(global.gameLaneSpeed+_plusSpeed, global.gameBarrieMaxSpeed+_plusSpeed);
             }
             if(trackBarrie['barrier2'].y>=1200){
                 var rdNum = rd(0,4);
                 trackBarrie['barrier2'].position.set(p4BarrieInTrackArr[rdNum].x, p4BarrieInTrackArr[rdNum].y );
-                barrieRdArr.rd2 = rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed);
+                barrieRdArr.rd2 = rd(global.gameLaneSpeed+_plusSpeed, global.gameBarrieMaxSpeed+_plusSpeed);
             }
-            if(trackBarrie['barrier3'].y>=1300){
+            if(trackBarrie['barrier3'].y>=1200){
                 var rdNum = rd(0,4);
                 trackBarrie['barrier3'].position.set(p4BarrieInTrackArr[rdNum].x, p4BarrieInTrackArr[rdNum].y );
-                barrieRdArr.rd3 = rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed);
+                barrieRdArr.rd3 = rd(global.gameLaneSpeed+_plusSpeed, global.gameBarrieMaxSpeed+_plusSpeed);
             }
             if(trackBarrie['barrier4'].y>=1200){
                 var rdNum = rd(0,4);
                 trackBarrie['barrier4'].position.set(p4BarrieInTrackArr[rdNum].x, p4BarrieInTrackArr[rdNum].y );
-                barrieRdArr.rd4 = rd(global.gameLaneSpeed, global.gameBarrieMaxSpeed);
+                barrieRdArr.rd4 = rd(global.gameLaneSpeed+_plusSpeed, global.gameBarrieMaxSpeed+_plusSpeed);
                 trackBarrie['barrier4'].visible = true;
             }
         
