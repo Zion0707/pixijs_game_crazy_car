@@ -278,6 +278,7 @@ function setup(loader, res){
         p4_04.pivot.set(154, 154);
 
         var cdTime = global.gameCountdown;
+        //重置倒计时数字位置
         p4CountdownText.text = cdTime;
         p4CountdownText.position.set((p4_04.width-p4CountdownText.width)/2, (p4_04.height-p4CountdownText.height)/2);
         clearInterval(timer1);
