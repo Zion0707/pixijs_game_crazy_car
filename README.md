@@ -1,4 +1,4 @@
-# pixijs game crazy car
+# pixi.js game crazy car
 
 pixi.js 游戏之 《疯狂汽车》
 
@@ -27,7 +27,7 @@ pixi.js 游戏之 《疯狂汽车》
 
 **策划：** Zion
 
-**设计：** Zion
+**美工：** Zion
 
 **开发：** Zion
 
