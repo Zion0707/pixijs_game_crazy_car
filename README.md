@@ -5,7 +5,11 @@ pixi.js 游戏之 《疯狂汽车》
 
 
 
+## 游戏在线地址
+游戏链接 → [点击打开](链接网址 "https://zion0707.github.io/pixijs_game_crazy_car/index.html") 
 
+游戏二维码 ↓  
+![](./res/qr_code.png)
 ## 游戏相关截图
 ![](./res/preview.jpg)
 
