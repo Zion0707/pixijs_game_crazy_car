@@ -48,6 +48,13 @@ app.loader
     {name:'p4_lane',url:'./images/p4_lane.png'},
     {name:'p4_left_btn',url:'./images/p4_left_btn.png'},
     {name:'p4_right_btn',url:'./images/p4_right_btn.png'},
+    {name:'p5_01',url:'./images/p5_01.png'},
+    {name:'p5_02',url:'./images/p5_02.png'},
+    {name:'p5_03',url:'./images/p5_03.png'},
+    {name:'p5_black_car',url:'./images/p5_black_car.png'},
+    {name:'p5_red_car',url:'./images/p5_red_car.png'},
+    {name:'p5_white_car',url:'./images/p5_white_car.png'},
+    {name:'p5_yellow_car',url:'./images/p5_yellow_car.png'},
 ])
 .load(setup)
 .on('progress',(loader, res)=>{
@@ -549,8 +556,60 @@ function setup(loader, res){
     p5.width = 750;
     p5.height = 1160;
     p5.position.set(0, (app.view.height-p5._height)/2);
-    
+    //标题
+    var p5_01 = new PIXI.Sprite.from(res.p5_01.texture);
+    p5_01.position.set((app.view.width-p5_01.width)/2, 0);
+    //【再来一局】按钮
+    var p5_02 = new PIXI.Sprite.from(res.p5_02.texture);
+    p5_02.position.set((app.view.width-p5_02.width)/2, p5._height-p5_02.height);
+    //光辉
+    var p5_03 = new PIXI.Sprite.from(res.p5_03.texture);
+    p5_03.position.set(118, 430);
+    //文案1
+    var p5Text1 = new PIXI.Text('本局游戏中，您用黄色小汽车获得',{
+            fontFamily: 'zkkl',
+            fontSize: 40,
+            fill: 0x000000
+        });
+    p5Text1.position.set((app.view.width-p5Text1.width)/2, 180);
+    //得分
+    var p5Text2 = new PIXI.Text('88888分',{
+        fontFamily: 'zkkl',
+        fontSize: 70,
+        fill: 0x000000,
+        fontWeight:'bold'
+    });
+    p5Text2.position.set((app.view.width-p5Text2.width)/2, 260);
+    //得分汽车
+    var resCar={};
+    resCar['car1'] = new PIXI.Sprite.from(res.p5_yellow_car.texture);
+    resCar['car1'].visible = true;
+    resCar['car1'].position.set((app.view.width-resCar['car1'].width)/2, 530);
 
+    resCar['car2'] = new PIXI.Sprite.from(res.p5_white_car.texture);
+    resCar['car2'].visible = true;
+    resCar['car2'].position.set((app.view.width-resCar['car2'].width)/2, 530);
+
+    resCar['car3'] = new PIXI.Sprite.from(res.p5_red_car.texture);
+    resCar['car3'].visible = true;
+    resCar['car3'].position.set((app.view.width-resCar['car3'].width)/2, 530);
+
+    resCar['car4'] = new PIXI.Sprite.from(res.p5_black_car.texture);
+    resCar['car4'].visible = true;
+    resCar['car4'].position.set((app.view.width-resCar['car4'].width)/2, 530);
+
+    //添加到页面中
+    p5.addChild(
+        p5_01, 
+        p5_02, 
+        p5_03, 
+        p5Text1, 
+        p5Text2,
+        resCar['car1'],
+        resCar['car2'],
+        resCar['car3'],
+        resCar['car4']
+    );
     app.stage.addChild(p5);
     /**** p5页 end ****/
 
