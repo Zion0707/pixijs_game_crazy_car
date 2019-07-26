@@ -81,8 +81,8 @@ var global={
     winHeight: $(window).height(), //屏幕高
 
     gamePlay: false,//控制游戏，开启【true】还是关闭【false】
-    gameLaneSpeed: 5,//赛道速度
-    gameBarrieMaxSpeed: 10,//障碍物最快速度
+    gameLaneSpeed: 10,//赛道速度
+    gameBarrieMaxSpeed: 20,//障碍物最快速度
     gameScoreBonus: 10,//撞击金币之后的加成倍数
     gameCountdown: 3,//启动的倒计时
     gameActiveColorCar: 1, //1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
@@ -265,16 +265,11 @@ function setup(loader, res){
         p4CountdownGroup.visible = true;
         //圆圈图标显示
         p4_04.rotation = 0;
-        p4_04.pivot.set(154, 154)
-        clearInterval(timer1);
-        var timer1 = setInterval(()=>{
-            p4_04.rotation-=1;
-        },20)
+        p4_04.pivot.set(154, 154);
 
         var cdTime = global.gameCountdown;
-        clearInterval(timer2);
-        var timer2 = setInterval(()=>{
-
+        clearInterval(timer);
+        var timer = setInterval(()=>{
             if(cdTime>0){
                 cdTime-=1;
                 p4CountdownText.text = cdTime==0?'Go':cdTime;
@@ -284,8 +279,7 @@ function setup(loader, res){
                 p4CountdownGroup.visible = false;
                 //游戏开关打开
                 global.gamePlay = true;
-                clearInterval(timer1);
-                clearInterval(timer2);
+                clearInterval(timer);
             }
         },1000);
 
@@ -610,6 +604,7 @@ function setup(loader, res){
         }
 
         //一些利用该定时器，使动画运行
+        p4_04.rotation-=1;
         p5_03.rotation+=0.05;
     });
     /**** p4页 end ****/
