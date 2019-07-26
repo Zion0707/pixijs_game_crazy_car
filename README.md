@@ -1,4 +1,4 @@
-# pixi.js game crazy car
+# pixi.js game 《crazy car》
 
 pixi.js 游戏之 《疯狂汽车》
 
