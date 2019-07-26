@@ -87,7 +87,7 @@ var global={
     gameCountdown: 3,//启动的倒计时
     gameActiveColorCar: 1, //1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
     gameResScore:0,//总的得分分数
-    gamePlusSpeed:0.5,//每秒增加的游戏速度
+    gamePlusSpeed:0.2,//每秒增加的游戏速度
 }
 
 /**** p1页 start ****/
