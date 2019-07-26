@@ -295,7 +295,7 @@ function setup(loader, res){
                 //游戏速度
                 _timer2 = setInterval(()=>{
                     _plusSpeed+=global.gamePlusSpeed;
-                    console.log(_plusSpeed);
+                    // console.log(_plusSpeed);
                 },1000);
             }
         },1000);
