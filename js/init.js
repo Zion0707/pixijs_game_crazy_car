@@ -60,13 +60,16 @@ app.loader
 .on('progress',(loader, res)=>{
     var progress = parseInt(loader.progress);
     // console.log(progress);
-    //百分比加载
-    p1_load_text.text = progress+'%';
-    p1_load_text.position.set((app.view.width-p1_load_text.width)/2, 168);
+    
     //加载完成时显示开始游戏按钮
-    if(progress>=100){
+    if(progress>=99){
+        progress=100;
         p1_02.visible = true;
     }
+
+    //百分比加载
+    p1_load_text.text = progress+'%';
+    p1_load_text.position.set((app.view.width-p1_load_text.width)/2, 168);    
 });
 
 
@@ -88,7 +91,7 @@ var global={
 
 /**** p1页 start ****/
 var p1 = new PIXI.Container();
-p1.visible = false;
+// p1.visible = false;
 p1.width = 750;
 p1.height = 1160;
 p1.position.set(0, (app.view.height-p1._height)/2);
@@ -111,6 +114,7 @@ p1_02.position.set((app.view.width-244)/2, p1._height-100);
 p1_02.visible = false;
 p1_02.on('tap', function(ev){
     p1.visible = false;
+    p2.visible = true;
 });
 
 //赛道图
@@ -128,9 +132,10 @@ app.stage.addChild(p1);
 
 
 //逻辑执行函数
+var p2=null;
 function setup(loader, res){
     /**** p2页 start ****/
-    var p2 = new PIXI.Container();
+    p2 = new PIXI.Container();
     p2.visible = false;
     p2.width = 750;
     p2.height = 1160;
@@ -150,6 +155,7 @@ function setup(loader, res){
     p2_03.position.set((app.view.width-p2_03.width)/2, p2._height-100);
     p2_03.on('tap', function(){
         p2.visible = false;
+        p3.visible = true;
     });
     
     //内容添加到页面中
@@ -242,6 +248,18 @@ function setup(loader, res){
         //游戏主界面呈现
         p3.visible = false;
         p4.visible = true;
+
+        //数据重置
+        //总分重置
+        p4TotalScoreText2.text = global.gameResScore = 0;
+        //障碍物重置
+        trackBarrie['barrier1'].y =
+        trackBarrie['barrier2'].y =
+        trackBarrie['barrier3'].y =
+        trackBarrie['barrier4'].y = -150;
+        //赛道重置
+        p4_lane1.position.y=0;
+        p4_lane2.position.y=-p4_lane1.height;
 
         //倒计时图标显示出来
         p4CountdownGroup.visible = true;
@@ -390,12 +408,14 @@ function setup(loader, res){
     p4ToolBg.beginFill(0xff9500);
     p4ToolBg.drawRect(0,0,750,150);
     p4ToolBg.endFill();
-    //左右按钮
+    
+    //左按钮
     var p4LeftBtn = new PIXI.Sprite.from(res.p4_left_btn.texture);
     p4LeftBtn.interactive = true;
     p4LeftBtn.position.set(22, 22);
-    p4LeftBtn.on('tap', function(){
-        console.log('向左');
+    //向左函数
+    function goLeft(){
+        // console.log('←');
         randomLane-=1;
         //不超出赛道
         if( randomLane<0 ){
@@ -408,11 +428,16 @@ function setup(loader, res){
             isEmergencyLane=false;            
         }
         trackCar[`car${global.gameActiveColorCar}`].x=p4CarInTrackArr[randomLane].x;
-    });
+    }
+    p4LeftBtn.on('tap', goLeft);
+
+    //右按钮
     var p4RightBtn = new PIXI.Sprite.from(res.p4_right_btn.texture);
     p4RightBtn.interactive = true;
-    p4RightBtn.on('tap', function(){
-        console.log('向右');
+    p4RightBtn.position.set(488, 22);
+    //向右函数
+    function goRight(){
+        // console.log('→');
         randomLane+=1;
         //不超出赛道
         if( randomLane>p4CarInTrackArr.length-1 ){
@@ -425,8 +450,19 @@ function setup(loader, res){
             isEmergencyLane=false;            
         }
         trackCar[`car${global.gameActiveColorCar}`].x=p4CarInTrackArr[randomLane].x;
-    });
-    p4RightBtn.position.set(488, 22);
+    }
+    p4RightBtn.on('tap', goRight);
+
+    //利用键盘控制转向
+    $(window).on('keydown', function(ev){
+        // console.log(ev.keyCode);
+        if(ev.keyCode==37){
+            goLeft();
+        }else if(ev.keyCode==39){
+            goRight();
+        }
+    })
+
     p4ToolGroup.addChild(p4ToolBg, p4LeftBtn, p4RightBtn);
 
 
@@ -457,7 +493,6 @@ function setup(loader, res){
     app.stage.addChild(p4);
 
     //游戏进度开关
-    var gameScore=0;
     var isEmergencyLane=false;
     //四个道中的障碍物随机速度
     var barrieRdArr={
@@ -519,15 +554,15 @@ function setup(loader, res){
 
             //总的分数相加
             if(isEmergencyLane){
-                gameScore-=1;
+                global.gameResScore-=1;
             }else{
-                gameScore+=1;
+                global.gameResScore+=1;
             }
-            if(gameScore<0){
-                gameScore=0;
+            if(global.gameResScore<0){
+                global.gameResScore=0;
             }
             //得分显示
-            p4TotalScoreText2.text=global.gameResScore=gameScore;
+            p4TotalScoreText2.text=global.gameResScore;
             //障碍物动起来
             trackBarrie['barrier1'].y+=barrieRdArr.rd1;
             trackBarrie['barrier2'].y+=barrieRdArr.rd2;
@@ -567,12 +602,15 @@ function setup(loader, res){
                 //游戏结束
                 gameOver();
             }else if( carBarrier4 ){
-                console.log('得到金币');
+                // console.log('得到金币');
                 trackBarrie['barrier4'].visible = false;
-                gameScore+=global.gameScoreBonus;
+                global.gameResScore+=global.gameScoreBonus;
             }
             
         }
+
+        //一些利用该定时器，使动画运行
+        p5_03.rotation+=0.05;
     });
     /**** p4页 end ****/
 
@@ -592,12 +630,15 @@ function setup(loader, res){
     p5_02.interactive=true;
     p5_02.on('tap', function(){
         p5.visible = false;
-        //信息重置
+        gameStart();
         console.log('再来一局');
     });
     //光辉
     var p5_03 = new PIXI.Sprite.from(res.p5_03.texture);
-    p5_03.position.set(118, 430);
+    p5_03.position.set(375, 660);
+    p5_03.rotation = 0;
+    p5_03.pivot.set(512/2, 508/2);
+
     //文案1
     var p5Text1 = new PIXI.Text('本局游戏中，您用黄色汽车获得',{
             fontFamily: 'zkkl',
@@ -665,6 +706,7 @@ function setup(loader, res){
     /**** p5页 end ****/
 
 
-    //游戏开始函数
-    gameStart();
+    // 测试可直接开启这些函数进入页面
+    // gameStart();
+    // gameOver();
 }
