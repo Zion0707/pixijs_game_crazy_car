@@ -87,7 +87,7 @@ var global={
     gameCountdown: 3,//启动的倒计时
     gameActiveColorCar: 1, //1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
     gameResScore:0,//总的得分分数
-    gamePlusSpeed:0.05,//每秒增加的游戏速度
+    gamePlusSpeed:0.5,//每秒增加的游戏速度
 }
 
 /**** p1页 start ****/
@@ -244,6 +244,7 @@ function setup(loader, res){
     
     var _randomLane=0;//随机车道
     var _plusSpeed=0;//根据时间段增加速度，增加游戏难度
+    var _timer2 = null;
     //开始游戏的逻辑
     var gameStart = function(){
         console.log('game start');
@@ -278,6 +279,7 @@ function setup(loader, res){
 
         var cdTime = global.gameCountdown;
         clearInterval(timer1);
+        clearInterval(_timer2);
         var timer1 = setInterval(()=>{
             if(cdTime>0){
                 cdTime-=1;
@@ -289,16 +291,15 @@ function setup(loader, res){
                 //游戏开关打开
                 global.gamePlay = true;
                 clearInterval(timer1);
+
+                //游戏速度
+                _timer2 = setInterval(()=>{
+                    _plusSpeed+=global.gamePlusSpeed;
+                    console.log(_plusSpeed);
+                },1000);
             }
         },1000);
         
-        //游戏速度
-        clearInterval(timer2);
-        var timer2 = setInterval(()=>{
-            _plusSpeed+=global.gamePlusSpeed;
-        },1000);
-
-
         //选中的汽车在赛道上呈现：1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
         trackCar[`car${global.gameActiveColorCar}`].visible = true;
         //使汽车走到随机的车道上，但不会走到应急车道中
@@ -512,6 +513,8 @@ function setup(loader, res){
     };
     //游戏结束执行函数
     var gameOver=function(){
+        //停止游戏速度增加
+        clearInterval(_timer2);
         //暂停游戏
         global.gamePlay = false;
         // //左右按钮不可点击
