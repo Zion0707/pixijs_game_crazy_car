@@ -76,14 +76,13 @@ var bump = new Bump(PIXI);
 var global={
     winWidth: $(window).width(), //屏幕宽
     winHeight: $(window).height(), //屏幕高
-    activeColorCar: 1, //1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
-    
+
     gamePlay: false,//控制游戏，开启【true】还是关闭【false】
     gameLaneSpeed: 5,//赛道速度
     gameBarrieMaxSpeed: 10,//障碍物最快速度
     gameScoreBonus: 10,//撞击金币之后的加成倍数
     gameCountdown: 3,//启动的倒计时
-
+    gameActiveColorCar: 1, //1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
     gameResScore:0,//总的得分分数
 }
 
@@ -198,7 +197,7 @@ function setup(loader, res){
     p3_yellow_car.on('tap', function(){
         console.log('黄色汽车');
         p3_02.position.set(p302PositionArr[0].x, p302PositionArr[0].y);
-        global.activeColorCar = 1;
+        global.gameActiveColorCar = 1;
     }); 
     //白色汽车
     var p3_white_car = new PIXI.Sprite.from(res.p3_white_car.texture);
@@ -207,7 +206,7 @@ function setup(loader, res){
     p3_white_car.on('tap', function(){
         console.log('白色汽车');
         p3_02.position.set(p302PositionArr[1].x, p302PositionArr[1].y);
-        global.activeColorCar = 2;
+        global.gameActiveColorCar = 2;
     }); 
     //红色汽车
     var p3_red_car = new PIXI.Sprite.from(res.p3_red_car.texture);
@@ -216,7 +215,7 @@ function setup(loader, res){
     p3_red_car.on('tap', function(){
         console.log('红色汽车');
         p3_02.position.set(p302PositionArr[2].x, p302PositionArr[2].y);
-        global.activeColorCar = 3;
+        global.gameActiveColorCar = 3;
     }); 
     //黑色汽车
     var p3_black_car = new PIXI.Sprite.from(res.p3_black_car.texture);
@@ -225,7 +224,7 @@ function setup(loader, res){
     p3_black_car.on('tap', function(){
         console.log('黑色汽车');
         p3_02.position.set(p302PositionArr[3].x, p302PositionArr[3].y);
-        global.activeColorCar = 4;
+        global.gameActiveColorCar = 4;
     }); 
     
     p3_car_group.addChild(p3_yellow_car, p3_white_car, p3_red_car, p3_black_car, p3_02);
@@ -239,6 +238,7 @@ function setup(loader, res){
     var randomLane=0;//随机车道
     //开始游戏的逻辑
     var gameStart = function(){
+        console.log('game start');
         //游戏主界面呈现
         p3.visible = false;
         p4.visible = true;
@@ -273,10 +273,10 @@ function setup(loader, res){
 
 
         //选中的汽车在赛道上呈现：1：黄色汽车, 2：白色汽车, 3：红色汽车, 4：黑色汽车
-        trackCar[`car${global.activeColorCar}`].visible = true;
+        trackCar[`car${global.gameActiveColorCar}`].visible = true;
         //使汽车走到随机的车道上，但不会走到应急车道中
         randomLane=rd(1,5);
-        trackCar[`car${global.activeColorCar}`].x=p4CarInTrackArr[randomLane].x;
+        trackCar[`car${global.gameActiveColorCar}`].x=p4CarInTrackArr[randomLane].x;
     }
 
     //游戏开始按钮
@@ -407,7 +407,7 @@ function setup(loader, res){
         }else{
             isEmergencyLane=false;            
         }
-        trackCar[`car${global.activeColorCar}`].x=p4CarInTrackArr[randomLane].x;
+        trackCar[`car${global.gameActiveColorCar}`].x=p4CarInTrackArr[randomLane].x;
     });
     var p4RightBtn = new PIXI.Sprite.from(res.p4_right_btn.texture);
     p4RightBtn.interactive = true;
@@ -424,7 +424,7 @@ function setup(loader, res){
         }else{
             isEmergencyLane=false;            
         }
-        trackCar[`car${global.activeColorCar}`].x=p4CarInTrackArr[randomLane].x;
+        trackCar[`car${global.gameActiveColorCar}`].x=p4CarInTrackArr[randomLane].x;
     });
     p4RightBtn.position.set(488, 22);
     p4ToolGroup.addChild(p4ToolBg, p4LeftBtn, p4RightBtn);
@@ -471,8 +471,35 @@ function setup(loader, res){
     var gameOver=function(){
         //暂停游戏
         global.gamePlay = false;
-        //左右按钮不可点击
-        p4RightBtn.interactive = p4LeftBtn.interactive = false;
+        // //左右按钮不可点击
+        // p4RightBtn.interactive = p4LeftBtn.interactive = false;
+        //页面切换
+        p4.visible = false;
+        p5.visible = true;
+        
+        //文案显示
+        var resColorCar='';
+        switch(global.gameActiveColorCar){
+            case 1:
+                resColorCar='黄色';
+            break;
+            case 2:
+                resColorCar='白色';
+            break;
+            case 3:
+                resColorCar='红色';
+            break;
+            case 4:
+                resColorCar='黑色';
+            break;
+        }
+        p5Text1.text=`本局游戏中，您用${resColorCar}汽车获得`;
+        resCar['car1'].visible = resCar['car2'].visible = resCar['car3'].visible = resCar['car4'].visible = false;
+        resCar[`car${global.gameActiveColorCar}`].visible = true;
+        //得分显示
+        p5Text2.text = global.gameResScore;
+        p5Text2.position.set((app.view.width-p5Text2.width)/2-30, 260);
+        p5Text3.position.set((app.view.width-p5Text2.width)/2-30+p5Text2.width, 260);
     }   
 
     //定时器
@@ -530,14 +557,14 @@ function setup(loader, res){
             }
         
             //汽车碰撞
-            var carBarrier1 = bump.hit(trackCar[`car${global.activeColorCar}`], trackBarrie['barrier1'], true);
-            var carBarrier2 = bump.hit(trackCar[`car${global.activeColorCar}`], trackBarrie['barrier2'], true);
-            var carBarrier3 = bump.hit(trackCar[`car${global.activeColorCar}`], trackBarrie['barrier3'], true);
+            var carBarrier1 = bump.hit(trackCar[`car${global.gameActiveColorCar}`], trackBarrie['barrier1'], true);
+            var carBarrier2 = bump.hit(trackCar[`car${global.gameActiveColorCar}`], trackBarrie['barrier2'], true);
+            var carBarrier3 = bump.hit(trackCar[`car${global.gameActiveColorCar}`], trackBarrie['barrier3'], true);
             //carBarrier4 是金币
-            var carBarrier4 = bump.hit(trackCar[`car${global.activeColorCar}`], trackBarrie['barrier4']);
+            var carBarrier4 = bump.hit(trackCar[`car${global.gameActiveColorCar}`], trackBarrie['barrier4']);
             if( carBarrier1 || carBarrier2 || carBarrier3 ){
-                console.log('被碰撞');
-
+                console.log('game over');
+                //游戏结束
                 gameOver();
             }else if( carBarrier4 ){
                 console.log('得到金币');
@@ -552,7 +579,7 @@ function setup(loader, res){
 
     /**** p5页 start ****/
     var p5 = new PIXI.Container();
-    // p5.visible = false;
+    p5.visible = false;
     p5.width = 750;
     p5.height = 1160;
     p5.position.set(0, (app.view.height-p5._height)/2);
@@ -562,41 +589,64 @@ function setup(loader, res){
     //【再来一局】按钮
     var p5_02 = new PIXI.Sprite.from(res.p5_02.texture);
     p5_02.position.set((app.view.width-p5_02.width)/2, p5._height-p5_02.height);
+    p5_02.interactive=true;
+    p5_02.on('tap', function(){
+        p5.visible = false;
+        //信息重置
+        console.log('再来一局');
+    });
     //光辉
     var p5_03 = new PIXI.Sprite.from(res.p5_03.texture);
     p5_03.position.set(118, 430);
     //文案1
-    var p5Text1 = new PIXI.Text('本局游戏中，您用黄色小汽车获得',{
+    var p5Text1 = new PIXI.Text('本局游戏中，您用黄色汽车获得',{
             fontFamily: 'zkkl',
             fontSize: 40,
             fill: 0x000000
         });
     p5Text1.position.set((app.view.width-p5Text1.width)/2, 180);
     //得分
-    var p5Text2 = new PIXI.Text('88888分',{
+    var p5Text2 = new PIXI.Text('88888',{
+        fontFamily: 'zkkl',
+        fontSize: 70,
+        fill: 0xff1a1a,
+        fontWeight:'bold',
+        dropShadow: true,
+        dropShadowColor: '#cc9732',
+        dropShadowBlur: 0,
+        dropShadowAngle: Math.PI / 6,
+        dropShadowDistance: 6,
+    });
+    p5Text2.position.set((app.view.width-p5Text2.width)/2-30, 260);
+    //【分】字
+    var p5Text3 = new PIXI.Text('分',{
         fontFamily: 'zkkl',
         fontSize: 70,
         fill: 0x000000,
-        fontWeight:'bold'
+        fontWeight:'bold',
+        dropShadow: true,
+        dropShadowColor: '#cc9732',
+        dropShadowBlur: 0,
+        dropShadowAngle: Math.PI / 6,
+        dropShadowDistance: 6,
     });
-    p5Text2.position.set((app.view.width-p5Text2.width)/2, 260);
+    p5Text3.position.set((app.view.width-p5Text2.width)/2-30+p5Text2.width, 260);
     //得分汽车
     var resCar={};
     resCar['car1'] = new PIXI.Sprite.from(res.p5_yellow_car.texture);
-    resCar['car1'].visible = true;
-    resCar['car1'].position.set((app.view.width-resCar['car1'].width)/2, 530);
+    resCar['car1'].position.set((app.view.width-resCar['car1'].width)/2, 540);
 
     resCar['car2'] = new PIXI.Sprite.from(res.p5_white_car.texture);
-    resCar['car2'].visible = true;
-    resCar['car2'].position.set((app.view.width-resCar['car2'].width)/2, 530);
+    resCar['car2'].position.set((app.view.width-resCar['car2'].width)/2, 540);
 
     resCar['car3'] = new PIXI.Sprite.from(res.p5_red_car.texture);
-    resCar['car3'].visible = true;
-    resCar['car3'].position.set((app.view.width-resCar['car3'].width)/2, 530);
+    resCar['car3'].position.set((app.view.width-resCar['car3'].width)/2, 540);
 
     resCar['car4'] = new PIXI.Sprite.from(res.p5_black_car.texture);
-    resCar['car4'].visible = true;
-    resCar['car4'].position.set((app.view.width-resCar['car4'].width)/2, 530);
+    resCar['car4'].position.set((app.view.width-resCar['car4'].width)/2, 540);
+
+    //先隐藏结果汽车
+    resCar['car1'].visible = resCar['car2'].visible = resCar['car3'].visible = resCar['car4'].visible = false;
 
     //添加到页面中
     p5.addChild(
@@ -605,6 +655,7 @@ function setup(loader, res){
         p5_03, 
         p5Text1, 
         p5Text2,
+        p5Text3,
         resCar['car1'],
         resCar['car2'],
         resCar['car3'],
@@ -615,5 +666,5 @@ function setup(loader, res){
 
 
     //游戏开始函数
-    // gameStart();
+    gameStart();
 }
